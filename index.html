@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b7fb8" />
+  <link rel="manifest" href="manifest.json" />
+  <title>LEEPACK Quotation Prototype</title>
+  <style>
+    :root{--b:#0b7fb8;--b2:#075f8c;--bg:#f4f7fa;--card:#fff;--txt:#1d2733;--muted:#687788;--line:#d9e2ea;--ok:#16835d;--warn:#b66a00;--bad:#b23b3b}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--txt)}
+    header{background:linear-gradient(135deg,var(--b2),var(--b));color:#fff;padding:20px 18px;position:sticky;top:0;z-index:5}
+    header h1{font-size:20px;margin:0 0 5px} header p{margin:0;opacity:.9;font-size:13px}
+    main{max-width:1100px;margin:auto;padding:18px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+    .tab{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}.tab.active{background:var(--b);color:#fff;border-color:var(--b)}
+    .panel{display:none}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    h2{font-size:18px;margin:0 0 14px}h3{font-size:15px;margin:14px 0 8px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px;font-weight:700}
+    input,select,textarea{width:100%;padding:11px;border:1px solid #c8d4df;border-radius:9px;background:#fff;font:inherit}textarea{min-height:90px;resize:vertical}
+    .checks{display:flex;gap:15px;flex-wrap:wrap}.checks label{display:flex;align-items:center;gap:7px;color:var(--txt);font-weight:500}.checks input{width:auto}
+    button{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer}.primary{background:var(--b);color:#fff}.secondary{background:#e8eef3;color:#243746}.danger{background:#f7e8e8;color:var(--bad)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#eaf2f7;margin:3px}.pill.ok{background:#e6f5ef;color:var(--ok)}.pill.warn{background:#fff0dc;color:var(--warn)}.pill.bad{background:#fbe9e9;color:var(--bad)}
+    table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}th{background:#f0f5f8}
+    .result-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.quote{background:#fff;border:1px solid #b8c6d0;padding:24px;min-height:600px}.quote h2{text-align:center;font-size:22px}.quote .test{color:var(--bad);font-weight:800;text-align:center;border:1px dashed var(--bad);padding:7px;margin-bottom:16px}.quote-row{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid #e2e8ed;padding:7px 0}.quote-row b{font-size:13px}.muted{color:var(--muted);font-size:12px}.empty{text-align:center;color:var(--muted);padding:28px}
+    .emailbox{font-family:Consolas,monospace}.status{font-weight:800}.small{font-size:12px}.note{background:#fff7df;border-left:4px solid #d39b00;padding:10px 12px;border-radius:6px;margin:10px 0;font-size:13px}
+    @media(max-width:760px){.grid,.grid3,.result-grid{grid-template-columns:1fr}.quote-row{grid-template-columns:1fr}.quote{padding:16px}header{position:static}}
+    @media print{header,.tabs,.no-print,.analysis-card{display:none!important}main{padding:0}.panel{display:block!important}.quote{border:0;box-shadow:none}.result-grid{display:block}.quote{min-height:auto}}
+  </style>
+</head>
+<body>
+<header><h1>LEEPACK Quotation Automation — RT Prototype</h1><p>Agent PWA + Customer Email → RT model screening → quotation draft</p></header>
+<main>
+  <div class="tabs no-print">
+    <button class="tab active" data-tab="agent">대리점 PWA 문의</button>
+    <button class="tab" data-tab="email">고객 메일 데모</button>
+    <button class="tab" data-tab="dashboard">영업 검토</button>
+  </div>
+
+  <section id="agent" class="panel active">
+    <div class="card">
+      <h2>New Quotation Request</h2>
+      <div class="grid">
+        <div><label>Country *</label><input id="country" value="India"></div>
+        <div><label>Customer company *</label><input id="company" value="ABC Foods"></div>
+        <div class="full"><label>Location</label><input id="location" value="Mumbai"></div>
+        <div><label>Product *</label><input id="product" value="Ground Coffee"></div>
+        <div><label>Product type *</label><select id="productType"><option>Powder</option><option>Granule</option><option>Liquid</option><option>Paste</option><option>Solid</option><option>Other</option></select></div>
+        <div><label>Pouch type *</label><select id="pouchType"><option>Zipper Stand-up</option><option>Stand-up</option><option>Flat pouch</option><option>Other</option></select></div>
+        <div><label>Pouch width (mm) *</label><input id="width" type="number" value="180"></div>
+        <div><label>Pouch length (mm) *</label><input id="length" type="number" value="300"></div>
+        <div><label>Filling weight *</label><input id="fillWeight" value="500 g"></div>
+        <div><label>Required speed (BPM) *</label><input id="speed" type="number" value="40"></div>
+        <div><label>Current packing method</label><select id="currentPacking"><option>Manual</option><option>Semi-automatic</option><option>Automatic</option></select></div>
+        <div><label>Existing automation equipment</label><input id="existing" value="None"></div>
+        <div><label>Number of filling steps</label><select id="fillSteps"><option value="1">1</option><option value="2">2</option></select></div>
+        <div><label>Additional process</label><div class="checks"><label><input type="checkbox" id="nitrogen"> Nitrogen flushing</label></div></div>
+        <div class="full"><label>Remarks</label><textarea id="remarks" placeholder="Other customer requirements"></textarea></div>
+      </div>
+      <div class="actions"><button class="primary" id="submitAgent">Submit & Analyze</button><button class="secondary" id="resetDemo">Reset demo data</button></div>
+    </div>
+  </section>
+
+  <section id="email" class="panel">
+    <div class="card">
+      <h2>Customer Email Intake — Prototype Demo</h2>
+      <p class="muted">실제 메일서버 연결 전 데모입니다. 메일 내용을 붙여넣고 구조화된 정보를 확인합니다.</p>
+      <label>Email text</label>
+      <textarea id="emailText" class="emailbox">Dear Sir,\nWe are ABC Foods in India. We need a machine for 500 g ground coffee in zipper stand-up pouch, 180 x 300 mm. Required speed is 40 bags/min. We are currently packing manually. Please send your quotation.</textarea>
+      <div class="actions"><button class="primary" id="analyzeEmail">Analyze Demo Email</button></div>
+      <div id="emailResult"></div>
+    </div>
+  </section>
+
+  <section id="dashboard" class="panel">
+    <div class="card no-print"><h2>Quotation Requests</h2><div id="requestList"></div></div>
+    <div id="reviewArea"></div>
+  </section>
+</main>
+<script src="app.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}</script>
+</body></html>

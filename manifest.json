@@ -1,0 +1,9 @@
+{
+  "name":"LEEPACK Quotation Prototype",
+  "short_name":"LEEPACK Quote",
+  "start_url":"./index.html",
+  "display":"standalone",
+  "background_color":"#f4f7fa",
+  "theme_color":"#0b7fb8",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
