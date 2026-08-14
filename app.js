@@ -8,7 +8,7 @@ const RT_MODELS=[
  {model:'RT-210',stations:10,wMin:150,wMax:300,lMin:200,lMax:425,price:138000,zipper:true},
 ];
 const TEST_OPTIONS={zipperOpener:5000,nitrogen:3000,secondFill:8000};
-const $=id=>document.getElementById(id);
+const $=id=>document.getElementById(id);const GOOGLE_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxCBTAvrft_2k4_tl-uDsGRYkan2FF-Vxd0RPhU_1-YEAOISy0djltHU5FM-m_aXYzF0g/exec';
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
 
@@ -51,8 +51,56 @@ function getAgentData(){return {
 function newId(){const d=new Date();const y=String(d.getFullYear()).slice(-2),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');let seq=Number(localStorage.getItem('leepack_seq')||0)+1;localStorage.setItem('leepack_seq',seq);return `QR-${y}${m}${day}-${String(seq).padStart(3,'0')}`;}
 function requests(){return JSON.parse(localStorage.getItem('leepack_requests')||'[]');}
 function saveRequests(a){localStorage.setItem('leepack_requests',JSON.stringify(a));}
-function submitData(d){
- const a=analyze(d); const r={id:newId(),created:new Date().toLocaleString(),status:'Draft / Sales Review',data:d,analysis:a}; const arr=requests();arr.unshift(r);saveRequests(arr);renderList();openReview(r.id);switchTab('dashboard');
+async function submitData(d){
+  const a=analyze(d);
+
+  const r={
+    id:newId(),
+    created:new Date().toLocaleString(),
+    status:'Draft / Sales Review',
+    data:d,
+    analysis:a
+  };
+
+  const arr=requests();
+  arr.unshift(r);
+  saveRequests(arr);
+
+  try{
+    await fetch(GOOGLE_SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{
+        'Content-Type':'text/plain;charset=utf-8'
+      },
+      body:JSON.stringify({
+        country:d.country,
+        customer:d.company,
+        location:d.location,
+        product:d.product,
+        productType:d.productType,
+        pouchType:d.pouchType,
+        pouchWidth:d.width,
+        pouchLength:d.length,
+        fillingWeight:d.fillWeight,
+        requiredSpeed:d.speed,
+        currentPacking:d.currentPacking,
+        existingEquipment:d.existingEquipment,
+        fillingSteps:d.fillSteps,
+        nitrogenFlushing:d.nitrogen,
+        remarks:d.remarks,
+        model:a.recommended ? a.recommended.model : '',
+        compatibleModels:a.candidates.map(x=>x.model).join(', '),
+        requiredOptions:a.options.map(x=>x.name).join(', ')
+      })
+    });
+  }catch(err){
+    console.error('Google Sheet save failed:',err);
+  }
+
+  renderList();
+  openReview(r.id);
+  switchTab('review');
 }
 $('submitAgent').onclick=()=>submitData(getAgentData());
 $('resetDemo').onclick=()=>{localStorage.removeItem('leepack_requests');localStorage.removeItem('leepack_seq');renderList();$('reviewArea').innerHTML='';};
