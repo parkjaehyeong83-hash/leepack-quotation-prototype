@@ -9,6 +9,7 @@ const RT_MODELS=[
 ];
 const TEST_OPTIONS={zipperOpener:5000,nitrogen:3000,secondFill:8000};
 const $=id=>document.getElementById(id);const GOOGLE_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxCBTAvrft_2k4_tl-uDsGRYkan2FF-Vxd0RPhU_1-YEAOISy0djltHU5FM-m_aXYzF0g/exec';
+let CURRENT_AGENT = null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
 
@@ -46,7 +47,7 @@ function analyze(d){
   return {requiredStations:req,candidates,recommended,excluded,options,review,total};
 }
 function getAgentData(){return {
- source:'Agent PWA',country:$('country').value.trim(),company:$('company').value.trim(),location:$('location').value.trim(),product:$('product').value.trim(),productType:$('productType').value,pouchType:$('pouchType').value,width:Number($('width').value),length:Number($('length').value),fillWeight:$('fillWeight').value.trim(),speed:Number($('speed').value),currentPacking:$('currentPacking').value,existing:$('existing').value.trim(),fillSteps:Number($('fillSteps').value),nitrogen:$('nitrogen').checked,remarks:$('remarks').value.trim()
+ source:'Agent PWA',agentId:CURRENT_AGENT?.id||'',country:$('country').value.trim(),company:$('company').value.trim(),location:$('location').value.trim(),product:$('product').value.trim(),productType:$('productType').value,pouchType:$('pouchType').value,width:Number($('width').value),length:Number($('length').value),fillWeight:$('fillWeight').value.trim(),speed:Number($('speed').value),currentPacking:$('currentPacking').value,existing:$('existing').value.trim(),fillSteps:Number($('fillSteps').value),nitrogen:$('nitrogen').checked,remarks:$('remarks').value.trim()
 };}
 function newId(){const d=new Date();const y=String(d.getFullYear()).slice(-2),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');let seq=Number(localStorage.getItem('leepack_seq')||0)+1;localStorage.setItem('leepack_seq',seq);return `QR-${y}${m}${day}-${String(seq).padStart(3,'0')}`;}
 function requests(){return JSON.parse(localStorage.getItem('leepack_requests')||'[]');}
@@ -130,3 +131,102 @@ window.approve=function(id){const arr=requests(),r=arr.find(x=>x.id===id);if(!r)
 window.downloadRecord=function(id){const r=requests().find(x=>x.id===id);if(!r)return;const d=r.data,a=r.analysis;const rows=[['Request No','Source','Customer','Country','Location','Product','Product Type','Pouch Type','Width mm','Length mm','Filling Weight','Required Speed','Current Packing','Existing Equipment','Required Stations','Recommended Model','Options','Prototype Total','Status'],[r.id,d.source,d.company,d.country,d.location,d.product,d.productType,d.pouchType,d.width,d.length,d.fillWeight,d.speed,d.currentPacking,d.existing,a.requiredStations,a.recommended?.model||'',a.options.map(x=>x.name).join(' / '),a.total,r.status]];const csv=rows.map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const x=document.createElement('a');x.href=url;x.download=`${r.id}_quotation_record.csv`;x.click();URL.revokeObjectURL(url);};
 function switchTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='dashboard')renderList();}
 document.querySelectorAll('.tab').forEach(x=>x.onclick=()=>switchTab(x.dataset.tab));renderList();
+// ===== DEALER LOGIN - DEMO =====
+const DEMO_AGENT = {
+  id: 'INDIA01',
+  password: '1234',
+  name: 'India Dealer'
+};
+
+function dealerLogin() {
+  const id = $('agentId').value.trim();
+  const password = $('agentPassword').value;
+
+  if (id === DEMO_AGENT.id && password === DEMO_AGENT.password) {
+    CURRENT_AGENT = {
+      id: DEMO_AGENT.id,
+      name: DEMO_AGENT.name
+    };
+
+    $('loginMessage').textContent = '';
+    $('currentAgentLabel').textContent = CURRENT_AGENT.id;
+    $('loginScreen').style.display = 'none';
+    $('appScreen').style.display = 'block';
+
+    switchTab('agent');
+  } else {
+    $('loginMessage').textContent = 'Invalid Agent ID or Password.';
+  }
+}
+
+function dealerLogout() {
+  CURRENT_AGENT = null;
+
+  $('agentId').value = '';
+  $('agentPassword').value = '';
+  $('appScreen').style.display = 'none';
+  $('loginScreen').style.display = 'flex';
+}
+
+function renderMyRequests() {
+  const box = $('myRequestsList');
+
+  if (!CURRENT_AGENT) {
+    box.innerHTML = '<div class="empty">Please login first.</div>';
+    return;
+  }
+
+  const mine = requests().filter(
+    r => r.data && r.data.agentId === CURRENT_AGENT.id
+  );
+
+  if (!mine.length) {
+    box.innerHTML =
+      '<div class="empty">No requests submitted by this Agent ID yet.</div>';
+    return;
+  }
+
+  box.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Product</th>
+          <th>Model</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${mine.map(r => `
+          <tr>
+            <td>${esc(r.id || '')}</td>
+            <td>${esc(r.created || '')}</td>
+            <td>${esc(r.data.company || '')}</td>
+            <td>${esc(r.data.product || '')}</td>
+            <td>${esc(
+              r.analysis &&
+              r.analysis.recommended &&
+              r.analysis.recommended.model
+                ? r.analysis.recommended.model
+                : '-'
+            )}</td>
+            <td>${esc(r.status || '')}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+$('loginBtn').onclick = dealerLogin;
+$('logoutBtn').onclick = dealerLogout;
+
+document
+  .querySelector('[data-tab="myRequests"]')
+  .addEventListener('click', renderMyRequests);
+
+$('agentPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') dealerLogin();
+});
