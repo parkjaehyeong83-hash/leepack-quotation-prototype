@@ -10,6 +10,7 @@ const RT_MODELS=[
 const TEST_OPTIONS={zipperOpener:5000,nitrogen:3000,secondFill:8000};
 const $=id=>document.getElementById(id);const GOOGLE_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxCBTAvrft_2k4_tl-uDsGRYkan2FF-Vxd0RPhU_1-YEAOISy0djltHU5FM-m_aXYzF0g/exec';
 let CURRENT_AGENT = null;
+let EDITING_REQUEST_ID = null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
 
@@ -55,17 +56,44 @@ function saveRequests(a){localStorage.setItem('leepack_requests',JSON.stringify(
 async function submitData(d){
   const a=analyze(d);
 
-  const r={
-    id:newId(),
-    created:new Date().toLocaleString(),
-    status:'Draft / Sales Review',
-    data:d,
-    analysis:a
+  const arr = requests();
+const isEditing = !!EDITING_REQUEST_ID;
+let r;
+
+if (isEditing) {
+  const idx = arr.findIndex(
+    x => x.id === EDITING_REQUEST_ID &&
+         x.data &&
+         x.data.agentId === CURRENT_AGENT.id
+  );
+
+  if (idx === -1) {
+    alert('Request not found or you do not have permission to edit it.');
+    return;
+  }
+
+  r = {
+    ...arr[idx],
+    updated: new Date().toLocaleString(),
+    data: d,
+    analysis: a
   };
 
-  const arr=requests();
+  arr[idx] = r;
+
+} else {
+  r = {
+    id: newId(),
+    created: new Date().toLocaleString(),
+    status: 'Draft / Sales Review',
+    data: d,
+    analysis: a
+  };
+
   arr.unshift(r);
-  saveRequests(arr);
+}
+
+saveRequests(arr);
 
   try{
     await fetch(GOOGLE_SCRIPT_URL,{
@@ -74,7 +102,9 @@ async function submitData(d){
       headers:{
         'Content-Type':'text/plain;charset=utf-8'
       },
-      body:JSON.stringify({
+      body:JSON.stringify({requestId:r.id,
+action:isEditing ? 'UPDATE' : 'NEW',
+       
         country:d.country,
         customer:d.company,
         location:d.location,
@@ -102,6 +132,7 @@ async function submitData(d){
   renderList();
   openReview(r.id);
   switchTab('review');
+ EDITING_REQUEST_ID = null;
 }
 $('submitAgent').onclick=()=>submitData(getAgentData());
 $('resetDemo').onclick=()=>{localStorage.removeItem('leepack_requests');localStorage.removeItem('leepack_seq');renderList();$('reviewArea').innerHTML='';};
@@ -195,7 +226,8 @@ function renderMyRequests() {
           <th>Customer</th>
           <th>Product</th>
           <th>Model</th>
-          <th>Status</th>
+          <th>Status</th> 
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -213,13 +245,48 @@ function renderMyRequests() {
                 : '-'
             )}</td>
             <td>${esc(r.status || '')}</td>
+            <td><button type="button" onclick="editRequest('${r.id}')">Edit</button></td>
           </tr>
         `).join('')}
       </tbody>
     </table>
   `;
 }
+function editRequest(id) {
+  const r = requests().find(x => x.id === id);
 
+  if (!r || !r.data) {
+    alert('Request data not found.');
+    return;
+  }
+
+  if (!CURRENT_AGENT || r.data.agentId !== CURRENT_AGENT.id) {
+    alert('You can only edit your own requests.');
+    return;
+  }
+
+  EDITING_REQUEST_ID = id;
+  const d = r.data;
+
+  $('country').value = d.country || '';
+  $('company').value = d.company || '';
+  $('location').value = d.location || '';
+  $('product').value = d.product || '';
+  $('productType').value = d.productType || '';
+  $('pouchType').value = d.pouchType || '';
+  $('width').value = d.width || '';
+  $('length').value = d.length || '';
+  $('fillWeight').value = d.fillWeight || '';
+  $('speed').value = d.speed || '';
+  $('currentPacking').value = d.currentPacking || '';
+  $('existing').value = d.existing || '';
+  $('fillSteps').value = d.fillSteps || '1';
+  $('nitrogen').checked = !!d.nitrogen;
+  $('remarks').value = d.remarks || '';
+
+  switchTab('agent');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 $('loginBtn').onclick = dealerLogin;
 $('logoutBtn').onclick = dealerLogout;
 
