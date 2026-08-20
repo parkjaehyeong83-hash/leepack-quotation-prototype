@@ -104,7 +104,7 @@ saveRequests(arr);
       },
       body:JSON.stringify({requestId:r.id,
 action:isEditing ? 'UPDATE' : 'NEW',
-       
+       agentId: d.agentId,
         country:d.country,
         customer:d.company,
         location:d.location,
