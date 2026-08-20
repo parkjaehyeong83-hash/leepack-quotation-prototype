@@ -183,13 +183,31 @@ function dealerLogin() {
     $('currentAgentLabel').textContent = CURRENT_AGENT.id;
     $('loginScreen').style.display = 'none';
     $('appScreen').style.display = 'block';
-
+    resetRequestForm();
     switchTab('agent');
   } else {
     $('loginMessage').textContent = 'Invalid Agent ID or Password.';
   }
 }
+function resetRequestForm() {
+  EDITING_REQUEST_ID = null;
 
+  $('country').value = '';
+  $('company').value = '';
+  $('location').value = '';
+  $('product').value = '';
+  $('productType').value = 'Powder';
+  $('pouchType').value = 'Stand-up';
+  $('width').value = '';
+  $('length').value = '';
+  $('fillWeight').value = '';
+  $('speed').value = '';
+  $('currentPacking').value = 'Manual';
+  $('existing').value = '';
+  $('fillSteps').value = '1';
+  $('nitrogen').checked = false;
+  $('remarks').value = '';
+}
 function dealerLogout() {
   CURRENT_AGENT = null;
 
@@ -289,7 +307,11 @@ function editRequest(id) {
 }
 $('loginBtn').onclick = dealerLogin;
 $('logoutBtn').onclick = dealerLogout;
-
+document
+  .querySelector('[data-tab="agent"]')
+  .addEventListener('click', () => {
+    resetRequestForm();
+  });
 document
   .querySelector('[data-tab="myRequests"]')
   .addEventListener('click', renderMyRequests);
