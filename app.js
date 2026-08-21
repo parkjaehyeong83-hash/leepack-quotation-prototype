@@ -217,7 +217,7 @@ function dealerLogout() {
   $('loginScreen').style.display = 'flex';
 }
 
-function renderMyRequests() {
+async function renderMyRequests() {
   const box = $('myRequestsList');
 
   if (!CURRENT_AGENT) {
@@ -225,50 +225,61 @@ function renderMyRequests() {
     return;
   }
 
-  const mine = requests().filter(
-    r => r.data && r.data.agentId === CURRENT_AGENT.id
-  );
+  box.innerHTML = '<div class="empty">Loading...</div>';
 
-  if (!mine.length) {
-    box.innerHTML =
-      '<div class="empty">No requests submitted by this Agent ID yet.</div>';
-    return;
-  }
+  try {
+    const url =
+      GOOGLE_SCRIPT_URL +
+      '?agentId=' +
+      encodeURIComponent(CURRENT_AGENT.id);
 
-  box.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Request ID</th>
-          <th>Date</th>
-          <th>Customer</th>
-          <th>Product</th>
-          <th>Model</th>
-          <th>Status</th> 
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${mine.map(r => `
+    const response = await fetch(url);
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to load requests.');
+    }
+
+    const mine = result.requests || [];
+
+    if (!mine.length) {
+      box.innerHTML =
+        '<div class="empty">No requests submitted by this Agent ID yet.</div>';
+      return;
+    }
+
+    box.innerHTML = `
+      <table>
+        <thead>
           <tr>
-            <td>${esc(r.id || '')}</td>
-            <td>${esc(r.created || '')}</td>
-            <td>${esc(r.data.company || '')}</td>
-            <td>${esc(r.data.product || '')}</td>
-            <td>${esc(
-              r.analysis &&
-              r.analysis.recommended &&
-              r.analysis.recommended.model
-                ? r.analysis.recommended.model
-                : '-'
-            )}</td>
-            <td>${esc(r.status || '')}</td>
-            <td><button type="button" onclick="editRequest('${r.id}')">Edit</button></td>
+            <th>Request ID</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>Model</th>
+            <th>Status</th>
           </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
+        </thead>
+        <tbody>
+          ${mine.map(r => `
+            <tr>
+              <td>${esc(r.requestId || '')}</td>
+              <td>${esc(r.receivedDate || '')}</td>
+              <td>${esc(r.customer || '')}</td>
+              <td>${esc(r.product || '')}</td>
+              <td>${esc(r.model || '-')}</td>
+              <td>${esc(r.status || '')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+  } catch (err) {
+    console.error(err);
+    box.innerHTML =
+      '<div class="empty">Failed to load requests from database.</div>';
+  }
 }
 function editRequest(id) {
   const r = requests().find(x => x.id === id);
