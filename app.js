@@ -193,23 +193,39 @@ window.downloadRecord=function(id){const r=requests().find(x=>x.id===id);if(!r)r
 function switchTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='dashboard')renderList();}
 document.querySelectorAll('.tab').forEach(x=>x.onclick=()=>switchTab(x.dataset.tab));renderList();
 // ===== DEALER LOGIN - DEMO =====
-const DEMO_AGENT = {
-  id: 'INDIA01',
-  password: '1234',
-  name: 'India Dealer'
-};
+const DEMO_AGENTS = [
+  {
+    id: 'INDIA01',
+    password: '1234',
+    name: 'India Dealer'
+  },
+  {
+    id: 'PERU01',
+    password: '5678',
+    name: 'Peru Dealer'
+  },
+  {
+    id: 'TAIWAN01',
+    password: '9012',
+    name: 'Taiwan Dealer'
+  }
+];
 
 function dealerLogin() {
   const id = $('agentId').value.trim();
   const password = $('agentPassword').value;
 
-  if (id === DEMO_AGENT.id && password === DEMO_AGENT.password) {
-    CURRENT_AGENT = {
-      id: DEMO_AGENT.id,
-      name: DEMO_AGENT.name
-    };
-
+  
     $('loginMessage').textContent = '';
+ const agent = DEMO_AGENTS.find(
+  a => a.id === id && a.password === password
+);
+
+if (agent) {
+  CURRENT_AGENT = {
+    id: agent.id,
+    name: agent.name
+  };
     $('currentAgentLabel').textContent = CURRENT_AGENT.id;
     $('loginScreen').style.display = 'none';
     $('appScreen').style.display = 'block';
