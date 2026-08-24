@@ -288,6 +288,7 @@ async function renderMyRequests() {
             <th>Customer</th>
             <th>Product</th>
             <th>Model</th>
+            <th>Attachment</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -299,7 +300,21 @@ async function renderMyRequests() {
               <td>${esc(r.receivedDate || '')}</td>
               <td>${esc(r.customer || '')}</td>
               <td>${esc(r.product || '')}</td>
-              <td>${esc(r.model || '-')}</td>
+                <td>${esc(r.model || '-')}</td>
+              <td>
+  ${
+    r.attachments
+      ? r.attachments.split('\n').map((item, i) => {
+          const pos = item.indexOf(': ');
+          const url = pos >= 0 ? item.slice(pos + 2) : '';
+          return url
+            ? `<a href="${esc(url)}" target="_blank" rel="noopener">View${r.attachments.includes('\n') ? ' ' + (i + 1) : ''}</a>`
+            : '-';
+        }).join('<br>')
+      : '-'
+  }
+</td>
+            
               <td>${esc(r.status || '')}</td>
               <td><button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button></td>
             </tr>
