@@ -11,6 +11,7 @@ const TEST_OPTIONS={zipperOpener:5000,nitrogen:3000,secondFill:8000};
 const $=id=>document.getElementById(id);const GOOGLE_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxCBTAvrft_2k4_tl-uDsGRYkan2FF-Vxd0RPhU_1-YEAOISy0djltHU5FM-m_aXYzF0g/exec';
 let CURRENT_AGENT = null;
 let EDITING_REQUEST_ID = null;
+let DB_REQUESTS = [];
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
 
@@ -61,27 +62,29 @@ const isEditing = !!EDITING_REQUEST_ID;
 let r;
 
 if (isEditing) {
-  const idx = arr.findIndex(
-    x => x.id === EDITING_REQUEST_ID &&
-         x.data &&
-         x.data.agentId === CURRENT_AGENT.id
-  );
 
-  if (idx === -1) {
-    alert('Request not found or you do not have permission to edit it.');
-    return;
-  }
-
+  // DB에서 불러온 기존 문의 수정
   r = {
-    ...arr[idx],
+    id: EDITING_REQUEST_ID,
     updated: new Date().toLocaleString(),
+    status: 'Draft / Sales Review',
     data: d,
     analysis: a
   };
 
-  arr[idx] = r;
+  // localStorage에 같은 문의가 있으면 같이 업데이트
+  const idx = arr.findIndex(
+    x => x.id === EDITING_REQUEST_ID
+  );
+
+  if (idx !== -1) {
+    arr[idx] = r;
+    saveRequests(arr);
+  }
 
 } else {
+
+  // 신규 문의
   r = {
     id: newId(),
     created: new Date().toLocaleString(),
@@ -91,9 +94,8 @@ if (isEditing) {
   };
 
   arr.unshift(r);
+  saveRequests(arr);
 }
-
-saveRequests(arr);
 
   try{
     await fetch(GOOGLE_SCRIPT_URL,{
@@ -241,6 +243,7 @@ async function renderMyRequests() {
     }
 
     const mine = result.requests || [];
+   DB_REQUESTS = mine;
 
     if (!mine.length) {
       box.innerHTML =
@@ -258,6 +261,7 @@ async function renderMyRequests() {
             <th>Product</th>
             <th>Model</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -269,6 +273,7 @@ async function renderMyRequests() {
               <td>${esc(r.product || '')}</td>
               <td>${esc(r.model || '-')}</td>
               <td>${esc(r.status || '')}</td>
+              <td><button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button></td>
             </tr>
           `).join('')}
         </tbody>
@@ -280,6 +285,49 @@ async function renderMyRequests() {
     box.innerHTML =
       '<div class="empty">Failed to load requests from database.</div>';
   }
+}
+function editDbRequest(id) {
+  const r = DB_REQUESTS.find(
+    x => x.requestId === id
+  );
+
+  if (!r) {
+    alert('Request data not found.');
+    return;
+  }
+
+  if (
+    !CURRENT_AGENT ||
+    r.agentId !== CURRENT_AGENT.id
+  ) {
+    alert('You can only edit your own requests.');
+    return;
+  }
+
+  EDITING_REQUEST_ID = id;
+
+  $('country').value = r.country || '';
+  $('company').value = r.customer || '';
+  $('location').value = r.location || '';
+  $('product').value = r.product || '';
+  $('productType').value = r.productType || '';
+  $('pouchType').value = r.pouchType || '';
+  $('width').value = r.pouchWidth || '';
+  $('length').value = r.pouchLength || '';
+  $('fillWeight').value = r.fillingWeight || '';
+  $('speed').value = r.requiredSpeed || '';
+  $('currentPacking').value = r.currentPacking || '';
+  $('existing').value = r.existingEquipment || '';
+  $('fillSteps').value = r.fillingSteps || '1';
+  $('nitrogen').checked =
+    String(r.nitrogenFlushing).toLowerCase() === 'yes';
+  $('remarks').value = r.remarks || '';
+
+  switchTab('agent');
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 function editRequest(id) {
   const r = requests().find(x => x.id === id);
