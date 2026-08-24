@@ -55,6 +55,33 @@ function newId(){const d=new Date();const y=String(d.getFullYear()).slice(-2),m=
 function requests(){return JSON.parse(localStorage.getItem('leepack_requests')||'[]');}
 function saveRequests(a){localStorage.setItem('leepack_requests',JSON.stringify(a));}
 async function submitData(d){
+   // Read attachment files
+  const attachmentInput = $('attachments');
+  const attachmentFiles = attachmentInput
+    ? Array.from(attachmentInput.files || [])
+    : [];
+
+  const attachments = [];
+
+  for (const file of attachmentFiles) {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const result = String(reader.result || '');
+        resolve(result.split(',')[1] || '');
+      };
+
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    attachments.push({
+      name: file.name,
+      type: file.type,
+      data: base64
+    });
+  }
   const a=analyze(d);
 
   const arr = requests();
@@ -124,7 +151,8 @@ action:isEditing ? 'UPDATE' : 'NEW',
         remarks:d.remarks,
         model:a.recommended ? a.recommended.model : '',
         compatibleModels:a.candidates.map(x=>x.model).join(', '),
-        requiredOptions:a.options.map(x=>x.name).join(', ')
+        requiredOptions:a.options.map(x=>x.name).join(', '),
+                           attachments: attachments
       })
     });
   }catch(err){
