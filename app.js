@@ -56,6 +56,27 @@ function newId(){const d=new Date();const y=String(d.getFullYear()).slice(-2),m=
 function requests(){return JSON.parse(localStorage.getItem('leepack_requests')||'[]');}
 function saveRequests(a){localStorage.setItem('leepack_requests',JSON.stringify(a));}
 async function submitData(d){
+ const requiredFields = [
+  ['country', 'Country'],
+  ['company', 'Customer company'],
+  ['product', 'Product'],
+  ['productType', 'Product type'],
+  ['pouchType', 'Pouch type'],
+  ['width', 'Pouch width'],
+  ['length', 'Pouch length'],
+  ['fillWeight', 'Filling weight'],
+  ['speed', 'Required speed']
+];
+
+for (const [id, label] of requiredFields) {
+  const el = $(id);
+
+  if (!String(el.value || '').trim()) {
+    alert(`Please enter or select: ${label}`);
+    el.focus();
+    return;
+  }
+}
    // Read attachment files
   const attachmentInput = $('attachments');
   const attachmentFiles = attachmentInput
