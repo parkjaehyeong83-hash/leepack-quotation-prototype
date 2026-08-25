@@ -164,6 +164,7 @@ action:isEditing ? 'UPDATE' : 'NEW',
   openReview(r.id);
   switchTab('review');
  EDITING_REQUEST_ID = null;
+ resetRequestForm();
 }
 $('submitAgent').onclick=()=>submitData(getAgentData());
 $('resetDemo').onclick=()=>{localStorage.removeItem('leepack_requests');localStorage.removeItem('leepack_seq');renderList();$('reviewArea').innerHTML='';};
@@ -234,10 +235,28 @@ if (agent) {
   role: agent.role || 'dealer'
 };
     $('currentAgentLabel').textContent = CURRENT_AGENT.id;
-    $('loginScreen').style.display = 'none';
-    $('appScreen').style.display = 'block';
-    resetRequestForm();
-    switchTab('agent');
+$('loginScreen').style.display = 'none';
+$('appScreen').style.display = 'block';
+
+const newRequestTab = document.querySelector('[data-tab="agent"]');
+const requestsTab = document.querySelector('[data-tab="myRequests"]');
+
+if (CURRENT_AGENT.role === 'admin') {
+  // Admin: New Request 숨김, 전체 문의만 표시
+  newRequestTab.style.display = 'none';
+  requestsTab.textContent = 'All Requests';
+
+  switchTab('myRequests');
+  renderMyRequests();
+
+} else {
+  // Dealer: 기존 화면 유지
+  newRequestTab.style.display = '';
+  requestsTab.textContent = 'My Requests';
+
+  resetRequestForm();
+  switchTab('agent');
+}
   } else {
     $('loginMessage').textContent = 'Invalid Agent ID or Password.';
   }
@@ -260,6 +279,7 @@ function resetRequestForm() {
   $('fillSteps').value = '1';
   $('nitrogen').checked = false;
   $('remarks').value = '';
+ $('attachments').value = '';
 }
 function dealerLogout() {
   CURRENT_AGENT = null;
