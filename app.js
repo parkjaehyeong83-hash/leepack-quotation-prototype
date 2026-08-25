@@ -208,6 +208,11 @@ const DEMO_AGENTS = [
     id: 'TAIWAN01',
     password: '9012',
     name: 'Taiwan Dealer'
+  },  {
+    id: 'ADMIN01',
+    password: '2580',
+    name: 'LEEPACK Admin',
+    role: 'admin'
   }
 ];
 
@@ -223,9 +228,10 @@ function dealerLogin() {
 
 if (agent) {
   CURRENT_AGENT = {
-    id: agent.id,
-    name: agent.name
-  };
+  id: agent.id,
+  name: agent.name,
+  role: agent.role || 'dealer'
+};
     $('currentAgentLabel').textContent = CURRENT_AGENT.id;
     $('loginScreen').style.display = 'none';
     $('appScreen').style.display = 'block';
@@ -275,7 +281,9 @@ async function renderMyRequests() {
 
   try {
     const url =
-      GOOGLE_SCRIPT_URL +
+  CURRENT_AGENT.role === 'admin'
+    ? GOOGLE_SCRIPT_URL + '?admin=1'
+    : GOOGLE_SCRIPT_URL +
       '?agentId=' +
       encodeURIComponent(CURRENT_AGENT.id);
 
