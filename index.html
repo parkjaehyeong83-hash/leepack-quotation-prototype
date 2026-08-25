@@ -541,7 +541,13 @@
             <label>Location</label>
             <input id="location" value="Mumbai">
           </div>
-
+<div>
+  <label>Requested delivery date</label>
+  <input
+    id="deliveryDate"
+    type="date"
+  >
+</div>
           <div>
             <label>Product *</label>
             <input id="product" value="Ground Coffee">
@@ -637,32 +643,43 @@
           </div>
 
           <div>
-            <label>Number of filling steps</label>
+  <label>Incoterms</label>
+  <select id="incoterms">
+    <option value="">Select Incoterms</option>
+    <option value="FOB">FOB</option>
+    <option value="CIF">CIF</option>
+    <option value="Others">Others</option>
+  </select>
+</div>
 
-           
-            <select id="fillSteps">
-               <option value="">Select filling steps</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-            </select>
-          </div>
+<div id="incotermsOtherBox" style="display:none;">
+  <label>Other Incoterms</label>
+  <input
+    id="incotermsOther"
+    placeholder="Please specify"
+  >
+</div>
 
-          <div>
-            <label>Additional process</label>
-
-            <div class="checks">
-
-              <label>
-                <input
-                  type="checkbox"
-                  id="nitrogen"
-                >
-                Nitrogen flushing
-              </label>
-
-            </div>
-          </div>
-
+          <div class="full">
+  <label>Factory power supply</label>
+  <div class="grid3">
+    <input
+      id="voltage"
+      type="number"
+      placeholder="Voltage (V)"
+    >
+    <input
+      id="phase"
+      type="number"
+      placeholder="Phase (Ph)"
+    >
+    <input
+      id="frequency"
+      type="number"
+      placeholder="Frequency (Hz)"
+    >
+  </div>
+</div>
           <div class="full">
             <label>Remarks</label>
 
