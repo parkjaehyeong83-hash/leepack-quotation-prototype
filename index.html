@@ -571,23 +571,34 @@
             </select>
           </div>
 
-          <div>
-            <label>Pouch width (mm) *</label>
-            <input
-              id="width"
-              type="number"
-              value="180"
-            >
-          </div>
+         <div>
+  <label>Pouch size (W × L mm) *</label>
 
-          <div>
-            <label>Pouch length (mm) *</label>
-            <input
-              id="length"
-              type="number"
-              value="300"
-            >
-          </div>
+  <div id="pouchSizeList">
+    <div class="pouch-size-row">
+      <input
+        type="number"
+        class="pouchWidth"
+        placeholder="Width"
+      >
+
+      <span>×</span>
+
+      <input
+        type="number"
+        class="pouchLength"
+        placeholder="Length"
+      >
+    </div>
+  </div>
+
+  <button
+    type="button"
+    id="addPouchSizeBtn"
+  >
+    + Add pouch size
+  </button>
+</div>
 
           <div>
             <label>Filling weight *</label>
