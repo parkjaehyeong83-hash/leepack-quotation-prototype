@@ -12,6 +12,7 @@ const $=id=>document.getElementById(id);const GOOGLE_SCRIPT_URL='https://script.
 let CURRENT_AGENT = null;
 let EDITING_REQUEST_ID = null;
 let DB_REQUESTS = [];
+let ADMIN_FILTER = 'ALL';
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
 
@@ -269,6 +270,10 @@ function dealerLogout() {
   $('loginScreen').style.display = 'flex';
 }
 
+window.setAdminFilter = function(agentId) {
+  ADMIN_FILTER = agentId;
+  renderMyRequests();
+};
 async function renderMyRequests() {
   const box = $('myRequestsList');
 
@@ -302,13 +307,31 @@ async function renderMyRequests() {
         '<div class="empty">No requests submitted by this Agent ID yet.</div>';
       return;
     }
+const visibleRows =
+  CURRENT_AGENT.role === 'admin' && ADMIN_FILTER !== 'ALL'
+    ? mine.filter(r => String(r.agentId || '') === ADMIN_FILTER)
+    : mine;
 
+const adminFilterHtml =
+  CURRENT_AGENT.role === 'admin'
+    ? `
+      <div style="margin-bottom:12px;">
+        <button type="button" onclick="setAdminFilter('ALL')">All</button>
+        <button type="button" onclick="setAdminFilter('INDIA01')">India</button>
+        <button type="button" onclick="setAdminFilter('PERU01')">Peru</button>
+        <button type="button" onclick="setAdminFilter('TAIWAN01')">Taiwan</button>
+      </div>
+    `
+    : '';
     box.innerHTML = `
+    ${adminFilterHtml}
       <table>
         <thead>
           <tr>
             <th>Request ID</th>
             <th>Date</th>
+            <th>Agent ID</th>
+            <th>Country</th>
             <th>Customer</th>
             <th>Product</th>
             <th>Model</th>
@@ -318,10 +341,12 @@ async function renderMyRequests() {
           </tr>
         </thead>
         <tbody>
-          ${mine.map(r => `
+          ${visibleRows.map(r => `
             <tr>
               <td>${esc(r.requestId || '')}</td>
               <td>${esc(r.receivedDate || '')}</td>
+              <td>${esc(r.agentId || '')}</td>
+<td>${esc(r.country || '')}</td>
               <td>${esc(r.customer || '')}</td>
               <td>${esc(r.product || '')}</td>
                 <td>${esc(r.model || '-')}</td>
