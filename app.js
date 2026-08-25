@@ -63,7 +63,26 @@ function getPouchSizes() {
     });
 } 
 function getAgentData(){return {
- source:'Agent PWA',agentId:CURRENT_AGENT?.id||'',country:$('country').value.trim(),company:$('company').value.trim(),location:$('location').value.trim(),product:$('product').value.trim(),productType:$('productType').value,pouchType:$('pouchType').value,pouchSizes:getPouchSizes(),fillWeight:$('fillWeight').value.trim(),speed:Number($('speed').value),currentPacking:$('currentPacking').value,existing:$('existing').value.trim(),fillSteps:Number($('fillSteps').value),nitrogen:$('nitrogen').checked,remarks:$('remarks').value.trim()
+  source:'Agent PWA',
+  agentId:CURRENT_AGENT?.id||'',
+  country:$('country').value.trim(),
+  company:$('company').value.trim(),
+  location:$('location').value.trim(),
+  deliveryDate:$('deliveryDate').value,
+  product:$('product').value.trim(),
+  productType:$('productType').value,
+  pouchType:$('pouchType').value,
+  pouchSizes:getPouchSizes(),
+  fillWeight:$('fillWeight').value.trim(),
+  speed:Number($('speed').value),
+  currentPacking:$('currentPacking').value,
+  existing:$('existing').value.trim(),
+  incoterms:$('incoterms').value,
+  incotermsOther:$('incotermsOther').value.trim(),
+  voltage:$('voltage').value.trim(),
+  phase:$('phase').value.trim(),
+  frequency:$('frequency').value.trim(),
+  remarks:$('remarks').value.trim()
 };}
 function newId(){const d=new Date();const y=String(d.getFullYear()).slice(-2),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');let seq=Number(localStorage.getItem('leepack_seq')||0)+1;localStorage.setItem('leepack_seq',seq);return `QR-${y}${m}${day}-${String(seq).padStart(3,'0')}`;}
 function requests(){return JSON.parse(localStorage.getItem('leepack_requests')||'[]');}
@@ -222,6 +241,14 @@ action:isEditing ? 'UPDATE' : 'NEW',
 
   $('pouchSizeList').appendChild(row);
 };
+$('incoterms').addEventListener('change', () => {
+  const isOther = $('incoterms').value === 'Others';
+  $('incotermsOtherBox').style.display = isOther ? 'block' : 'none';
+
+  if (!isOther) {
+    $('incotermsOther').value = '';
+  }
+});
 $('submitAgent').onclick=()=>submitData(getAgentData());
 $('resetDemo').onclick=()=>{localStorage.removeItem('leepack_requests');localStorage.removeItem('leepack_seq');renderList();$('reviewArea').innerHTML='';};
 
@@ -230,7 +257,7 @@ function parseEmailDemo(t){
  const company=(s.match(/(?:are|from)\s+([A-Z][A-Za-z0-9 &.-]{2,40}?)(?:\s+in\s+|\.|,)/)||[])[1]||'Customer Review Required';
  const size=s.match(/(\d{2,3})\s*[x×]\s*(\d{2,3})\s*mm/i); const fill=s.match(/(\d+(?:\.\d+)?)\s*(g|kg|ml|l)\b/i); const speed=s.match(/(\d+)\s*(?:bags?|pouches?)\s*\/\s*min|(?:speed[^0-9]{0,15})(\d+)/i);
  const zipper=/zipper/i.test(s), stand=/stand[- ]?up/i.test(s), liquid=/liquid|sauce|water|juice|oil/i.test(s), powder=/powder|coffee|flour|spice/i.test(s);
- return {source:'Customer Email Demo',country,company,location:'',product:(s.match(/(?:for|pack)\s+(?:\d+\s*(?:g|kg|ml|l)\s+)?([A-Za-z ]{3,30}?)(?:\s+in\s+|,|\.)/i)||[])[1]?.trim()||'Product Review Required',productType:liquid?'Liquid':powder?'Powder':'Other',pouchType:zipper&&stand?'Zipper Stand-up':zipper?'Zipper Stand-up':stand?'Stand-up':'Other',width:size?Number(size[1]):0,length:size?Number(size[2]):0,fillWeight:fill?`${fill[1]} ${fill[2]}`:'Review Required',speed:speed?Number(speed[1]||speed[2]):0,currentPacking:/manual/i.test(s)?'Manual':'Review Required',existing:'Review Required',fillSteps:1,nitrogen:/nitrogen|n2/i.test(s),remarks:'Parsed by offline demo rules — final system will use AI analysis.'};
+ return {source:'Customer Email Demo',country,company,location:'',product:(s.match(/(?:for|pack)\s+(?:\d+\s*(?:g|kg|ml|l)\s+)?([A-Za-z ]{3,30}?)(?:\s+in\s+|,|\.)/i)||[])[1]?.trim()||'Product Review Required',productType:liquid?'Liquid':powder?'Powder':'Other',pouchType:zipper&&stand?'Zipper Stand-up':zipper?'Zipper Stand-up':stand?'Stand-up':'Other',width:size?Number(size[1]):0,length:size?Number(size[2]):0,fillWeight:fill?`${fill[1]} ${fill[2]}`:'Review Required',speed:speed?Number(speed[1]||speed[2]):0,currentPacking:/manual/i.test(s)?'Manual':'Review Required',existing:'Review Required',remarks:'Parsed by offline demo rules — final system will use AI analysis.'};
 }
 $('analyzeEmail').onclick=()=>{const d=parseEmailDemo($('emailText').value);const a=analyze(d);$('emailResult').innerHTML=`<div class="card" style="margin-top:14px"><h3>Extracted information</h3>${summaryHtml(d,a)}<div class="actions"><button class="primary" id="saveEmailReq">Save to quotation workflow</button></div></div>`;$('saveEmailReq').onclick=()=>submitData(d);};
 
@@ -338,8 +365,13 @@ pouchSizeList.innerHTML = `
   $('speed').value = '';
   $('currentPacking').value = '';
   $('existing').value = '';
-  $('fillSteps').value = '';
-  $('nitrogen').checked = false;
+  $('deliveryDate').value = '';
+$('incoterms').value = '';
+$('incotermsOther').value = '';
+$('incotermsOtherBox').style.display = 'none';
+$('voltage').value = '';
+$('phase').value = '';
+$('frequency').value = '';
   $('remarks').value = '';
  $('attachments').value = '';
 }
@@ -491,9 +523,7 @@ function editDbRequest(id) {
   $('speed').value = r.requiredSpeed || '';
   $('currentPacking').value = r.currentPacking || '';
   $('existing').value = r.existingEquipment || '';
-  $('fillSteps').value = r.fillingSteps || '1';
-  $('nitrogen').checked =
-    String(r.nitrogenFlushing).toLowerCase() === 'yes';
+  
   $('remarks').value = r.remarks || '';
 
   switchTab('agent');
@@ -530,8 +560,7 @@ function editRequest(id) {
   $('speed').value = d.speed || '';
   $('currentPacking').value = d.currentPacking || '';
   $('existing').value = d.existing || '';
-  $('fillSteps').value = d.fillSteps || '1';
-  $('nitrogen').checked = !!d.nitrogen;
+ 
   $('remarks').value = d.remarks || '';
 
   switchTab('agent');
