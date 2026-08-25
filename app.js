@@ -49,8 +49,21 @@ function analyze(d){
   const total=recommended?recommended.price+options.reduce((s,o)=>s+o.price,0):0;
   return {requiredStations:req,candidates,recommended,excluded,options,review,total};
 }
+
+function getPouchSizes() {
+  return Array.from(document.querySelectorAll('.pouch-size-row'))
+    .map(row => {
+      const width = row.querySelector('.pouchWidth').value.trim();
+      const length = row.querySelector('.pouchLength').value.trim();
+
+      return {
+        width: width,
+        length: length
+      };
+    });
+} 
 function getAgentData(){return {
- source:'Agent PWA',agentId:CURRENT_AGENT?.id||'',country:$('country').value.trim(),company:$('company').value.trim(),location:$('location').value.trim(),product:$('product').value.trim(),productType:$('productType').value,pouchType:$('pouchType').value,width:Number($('width').value),length:Number($('length').value),fillWeight:$('fillWeight').value.trim(),speed:Number($('speed').value),currentPacking:$('currentPacking').value,existing:$('existing').value.trim(),fillSteps:Number($('fillSteps').value),nitrogen:$('nitrogen').checked,remarks:$('remarks').value.trim()
+ source:'Agent PWA',agentId:CURRENT_AGENT?.id||'',country:$('country').value.trim(),company:$('company').value.trim(),location:$('location').value.trim(),product:$('product').value.trim(),productType:$('productType').value,pouchType:$('pouchType').value,pouchSizes:getPouchSizes(),fillWeight:$('fillWeight').value.trim(),speed:Number($('speed').value),currentPacking:$('currentPacking').value,existing:$('existing').value.trim(),fillSteps:Number($('fillSteps').value),nitrogen:$('nitrogen').checked,remarks:$('remarks').value.trim()
 };}
 function newId(){const d=new Date();const y=String(d.getFullYear()).slice(-2),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');let seq=Number(localStorage.getItem('leepack_seq')||0)+1;localStorage.setItem('leepack_seq',seq);return `QR-${y}${m}${day}-${String(seq).padStart(3,'0')}`;}
 function requests(){return JSON.parse(localStorage.getItem('leepack_requests')||'[]');}
@@ -62,12 +75,19 @@ async function submitData(d){
   ['product', 'Product'],
   ['productType', 'Product type'],
   ['pouchType', 'Pouch type'],
-  ['width', 'Pouch width'],
-  ['length', 'Pouch length'],
+  
   ['fillWeight', 'Filling weight'],
   ['speed', 'Required speed']
 ];
+const pouchSizes = getPouchSizes();
 
+if (
+  pouchSizes.length === 0 ||
+  pouchSizes.some(size => !size.width || !size.length)
+) {
+  alert('Please enter at least one complete pouch size.');
+  return;
+}
 for (const [id, label] of requiredFields) {
   const el = $(id);
 
@@ -162,8 +182,7 @@ action:isEditing ? 'UPDATE' : 'NEW',
         product:d.product,
         productType:d.productType,
         pouchType:d.pouchType,
-        pouchWidth:d.width,
-        pouchLength:d.length,
+        pouchSizes:d.pouchSizes,
         fillingWeight:d.fillWeight,
         requiredSpeed:d.speed,
         currentPacking:d.currentPacking,
@@ -186,7 +205,23 @@ action:isEditing ? 'UPDATE' : 'NEW',
   switchTab('review');
  EDITING_REQUEST_ID = null;
  resetRequestForm();
-}
+}$('addPouchSizeBtn').onclick = () => {
+  const row = document.createElement('div');
+  row.className = 'pouch-size-row';
+
+  row.innerHTML = `
+    <input type="number" class="pouchWidth" placeholder="Width">
+    <span>×</span>
+    <input type="number" class="pouchLength" placeholder="Length">
+    <button type="button" class="removePouchSize">Remove</button>
+  `;
+
+  row.querySelector('.removePouchSize').onclick = () => {
+    row.remove();
+  };
+
+  $('pouchSizeList').appendChild(row);
+};
 $('submitAgent').onclick=()=>submitData(getAgentData());
 $('resetDemo').onclick=()=>{localStorage.removeItem('leepack_requests');localStorage.removeItem('leepack_seq');renderList();$('reviewArea').innerHTML='';};
 
@@ -291,8 +326,14 @@ function resetRequestForm() {
   $('product').value = '';
   $('productType').value = '';
   $('pouchType').value = '';
-  $('width').value = '';
-  $('length').value = '';
+  const pouchSizeList = $('pouchSizeList');
+pouchSizeList.innerHTML = `
+  <div class="pouch-size-row">
+    <input type="number" class="pouchWidth" placeholder="Width">
+    <span>×</span>
+    <input type="number" class="pouchLength" placeholder="Length">
+  </div>
+`;
   $('fillWeight').value = '';
   $('speed').value = '';
   $('currentPacking').value = '';
@@ -445,8 +486,7 @@ function editDbRequest(id) {
   $('product').value = r.product || '';
   $('productType').value = r.productType || '';
   $('pouchType').value = r.pouchType || '';
-  $('width').value = r.pouchWidth || '';
-  $('length').value = r.pouchLength || '';
+  
   $('fillWeight').value = r.fillingWeight || '';
   $('speed').value = r.requiredSpeed || '';
   $('currentPacking').value = r.currentPacking || '';
