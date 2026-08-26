@@ -281,9 +281,62 @@ function renderDashboard(){
   const box = $('dashboardContent');
   if (!box) return;
 
+  const data = DB_REQUESTS || [];
+
+  const totalRequests = data.length;
+
+  const now = new Date();
+  const thisMonth = data.filter(r => {
+    const d = new Date(r.receivedDate);
+    return !isNaN(d) &&
+      d.getFullYear() === now.getFullYear() &&
+      d.getMonth() === now.getMonth();
+  }).length;
+
+  function topValue(field){
+    const counts = {};
+
+    data.forEach(r => {
+      const value = String(r[field] || '').trim();
+      if (!value) return;
+
+      counts[value] = (counts[value] || 0) + 1;
+    });
+
+    const sorted = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1]);
+
+    return sorted.length ? sorted[0][0] : '-';
+  }
+
+  const topCountry = topValue('country');
+  const topProduct = topValue('product');
+
   box.innerHTML = `
-    <div class="empty">
-      Dashboard is ready.
+    <div class="dashboard-summary">
+
+      <div class="dashboard-card">
+        <div class="dashboard-label">TOTAL REQUESTS</div>
+        <div class="dashboard-value">${totalRequests}</div>
+        <div class="muted">All time</div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="dashboard-label">THIS MONTH</div>
+        <div class="dashboard-value">${thisMonth}</div>
+        <div class="muted">Current month</div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="dashboard-label">TOP COUNTRY</div>
+        <div class="dashboard-value dashboard-text">${topCountry}</div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="dashboard-label">TOP PRODUCT</div>
+        <div class="dashboard-value dashboard-text">${topProduct}</div>
+      </div>
+
     </div>
   `;
 }
