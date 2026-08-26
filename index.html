@@ -427,6 +427,52 @@
   flex:0 0 auto;
   white-space:nowrap;
 }
+    /* ADMIN DASHBOARD SUMMARY */
+
+.dashboard-summary{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+  margin-top:20px;
+}
+
+.dashboard-card{
+  background:#fff;
+  border:1px solid #d9e2ea;
+  border-radius:12px;
+  padding:20px;
+  min-height:110px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+
+.dashboard-label{
+  font-size:12px;
+  font-weight:700;
+  color:#687788;
+  margin-bottom:10px;
+}
+
+.dashboard-value{
+  font-size:30px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.dashboard-text{
+  font-size:22px;
+}
+
+@media(max-width:800px){
+  .dashboard-summary{
+    grid-template-columns:repeat(2, 1fr);
+  }
+}
+
+@media(max-width:480px){
+  .dashboard-summary{
+    grid-template-columns:1fr;
+  }
+}
   </style>
 </head>
 
