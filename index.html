@@ -516,7 +516,12 @@
       >
         My Requests
       </button>
-
+<button
+  class="tab"
+  data-tab="dashboard"
+>
+  Dashboard
+</button>
       <!-- 기존 내부 기능은 유지하되 대리점 화면에서는 숨김 -->
       <button
         class="tab internal-only"
@@ -748,7 +753,25 @@
 
     </section>
 
+<!-- ADMIN DASHBOARD -->
+<section
+  id="dashboard"
+  class="panel"
+>
+  <div class="card">
+    <h2>Dashboard</h2>
 
+    <p class="muted">
+      Overview of quotation requests.
+    </p>
+
+    <div id="dashboardContent">
+      <div class="empty">
+        Dashboard data will be shown here.
+      </div>
+    </div>
+  </div>
+</section>
     <!-- MY REQUESTS -->
     <section
       id="myRequests"
