@@ -336,12 +336,12 @@ $('appScreen').style.display = 'block';
 
 const newRequestTab = document.querySelector('[data-tab="agent"]');
 const requestsTab = document.querySelector('[data-tab="myRequests"]');
-
+const dashboardTab = document.querySelector('[data-tab="dashboard"]');
 if (CURRENT_AGENT.role === 'admin') {
   // Admin: New Request 숨김, 전체 문의만 표시
   newRequestTab.style.display = 'none';
   requestsTab.textContent = 'All Requests';
-
+dashboardTab.style.display = '';
   switchTab('myRequests');
   renderMyRequests();
 
@@ -349,7 +349,7 @@ if (CURRENT_AGENT.role === 'admin') {
   // Dealer: 기존 화면 유지
   newRequestTab.style.display = '';
   requestsTab.textContent = 'My Requests';
-
+dashboardTab.style.display = 'none';
   resetRequestForm();
   switchTab('agent');
 }
