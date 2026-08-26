@@ -277,68 +277,90 @@ function quoteHtml(r){const d=r.data,a=r.analysis,m=a.recommended;return `<div c
 window.approve=function(id){const arr=requests(),r=arr.find(x=>x.id===id);if(!r)return;r.status='Approved (Prototype)';saveRequests(arr);renderList();openReview(id);};
 window.downloadRecord=function(id){const r=requests().find(x=>x.id===id);if(!r)return;const d=r.data,a=r.analysis;const rows=[['Request No','Source','Customer','Country','Location','Product','Product Type','Pouch Type','Width mm','Length mm','Filling Weight','Required Speed','Current Packing','Existing Equipment','Required Stations','Recommended Model','Options','Prototype Total','Status'],[r.id,d.source,d.company,d.country,d.location,d.product,d.productType,d.pouchType,d.width,d.length,d.fillWeight,d.speed,d.currentPacking,d.existing,a.requiredStations,a.recommended?.model||'',a.options.map(x=>x.name).join(' / '),a.total,r.status]];const csv=rows.map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const x=document.createElement('a');x.href=url;x.download=`${r.id}_quotation_record.csv`;x.click();URL.revokeObjectURL(url);};
 function switchTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='dashboard')renderDashboard();}
-function renderDashboard(){
+async function renderDashboard(){
   const box = $('dashboardContent');
   if (!box) return;
 
-  const data = DB_REQUESTS || [];
+  try {
+    if (!DB_REQUESTS || !DB_REQUESTS.length) {
+      box.innerHTML = '<div class="empty">Loading dashboard data...</div>';
 
-  const totalRequests = data.length;
+      const url = GOOGLE_SCRIPT_URL + '?admin=1';
+      const response = await fetch(url);
+      const result = await response.json();
 
-  const now = new Date();
-  const thisMonth = data.filter(r => {
-    const d = new Date(r.receivedDate);
-    return !isNaN(d) &&
-      d.getFullYear() === now.getFullYear() &&
-      d.getMonth() === now.getMonth();
-  }).length;
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to load dashboard data.');
+      }
 
-  function topValue(field){
-    const counts = {};
+      DB_REQUESTS = result.requests || [];
+    }
 
-    data.forEach(r => {
-      const value = String(r[field] || '').trim();
-      if (!value) return;
+    const data = DB_REQUESTS || [];
+    const totalRequests = data.length;
 
-      counts[value] = (counts[value] || 0) + 1;
-    });
+    const now = new Date();
 
-    const sorted = Object.entries(counts)
-      .sort((a, b) => b[1] - a[1]);
+    const thisMonth = data.filter(r => {
+      const d = new Date(r.receivedDate);
 
-    return sorted.length ? sorted[0][0] : '-';
+      return !isNaN(d) &&
+        d.getFullYear() === now.getFullYear() &&
+        d.getMonth() === now.getMonth();
+    }).length;
+
+    function topValue(field){
+      const counts = {};
+
+      data.forEach(r => {
+        const value = String(r[field] || '').trim();
+        if (!value) return;
+
+        counts[value] = (counts[value] || 0) + 1;
+      });
+
+      const sorted = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1]);
+
+      return sorted.length ? sorted[0][0] : '-';
+    }
+
+    const topCountry = topValue('country');
+    const topProduct = topValue('product');
+
+    box.innerHTML = `
+      <div class="dashboard-summary">
+
+        <div class="dashboard-card">
+          <div class="dashboard-label">TOTAL REQUESTS</div>
+          <div class="dashboard-value">${totalRequests}</div>
+          <div class="muted">All time</div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="dashboard-label">THIS MONTH</div>
+          <div class="dashboard-value">${thisMonth}</div>
+          <div class="muted">Current month</div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="dashboard-label">TOP COUNTRY</div>
+          <div class="dashboard-value dashboard-text">${topCountry}</div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="dashboard-label">TOP PRODUCT</div>
+          <div class="dashboard-value dashboard-text">${topProduct}</div>
+        </div>
+
+      </div>
+    `;
+
+  } catch (err) {
+    console.error(err);
+    box.innerHTML =
+      '<div class="empty">Failed to load dashboard data.</div>';
   }
-
-  const topCountry = topValue('country');
-  const topProduct = topValue('product');
-
-  box.innerHTML = `
-    <div class="dashboard-summary">
-
-      <div class="dashboard-card">
-        <div class="dashboard-label">TOTAL REQUESTS</div>
-        <div class="dashboard-value">${totalRequests}</div>
-        <div class="muted">All time</div>
-      </div>
-
-      <div class="dashboard-card">
-        <div class="dashboard-label">THIS MONTH</div>
-        <div class="dashboard-value">${thisMonth}</div>
-        <div class="muted">Current month</div>
-      </div>
-
-      <div class="dashboard-card">
-        <div class="dashboard-label">TOP COUNTRY</div>
-        <div class="dashboard-value dashboard-text">${topCountry}</div>
-      </div>
-
-      <div class="dashboard-card">
-        <div class="dashboard-label">TOP PRODUCT</div>
-        <div class="dashboard-value dashboard-text">${topProduct}</div>
-      </div>
-
-    </div>
-  `;
 }
   
 
