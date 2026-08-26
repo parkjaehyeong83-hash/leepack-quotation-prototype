@@ -517,13 +517,63 @@ function editDbRequest(id) {
   $('location').value = r.location || '';
   $('product').value = r.product || '';
   $('productType').value = r.productType || '';
-  $('pouchType').value = r.pouchType || '';
+ $('pouchType').value = r.pouchType || '';
+ const pouchSizeList = $('pouchSizeList');
+pouchSizeList.innerHTML = '';
+
+const editPouchSizes =
+  Array.isArray(r.pouchSizes) && r.pouchSizes.length
+    ? r.pouchSizes
+    : [{ width: '', length: '' }];
+
+editPouchSizes.forEach((size, index) => {
+  const row = document.createElement('div');
+  row.className = 'pouch-size-row';
+
+  row.innerHTML = `
+    <input
+      type="number"
+      class="pouchWidth"
+      placeholder="Width"
+      value="${size.width || ''}"
+    >
+    <span>×</span>
+    <input
+      type="number"
+      class="pouchLength"
+      placeholder="Length"
+      value="${size.length || ''}"
+    >
+    ${index > 0
+      ? '<button type="button" class="removePouchSize">Remove</button>'
+      : ''}
+  `;
+
+  const removeBtn = row.querySelector('.removePouchSize');
+
+  if (removeBtn) {
+    removeBtn.onclick = () => row.remove();
+  }
+
+  pouchSizeList.appendChild(row);
+});
+  
   
   $('fillWeight').value = r.fillingWeight || '';
   $('speed').value = r.requiredSpeed || '';
   $('currentPacking').value = r.currentPacking || '';
   $('existing').value = r.existingEquipment || '';
-  
+  $('deliveryDate').value = r.deliveryDate || '';
+
+$('incoterms').value = r.incoterms || '';
+$('incotermsOther').value = r.incotermsOther || '';
+
+$('incotermsOtherBox').style.display =
+  r.incoterms === 'Others' ? 'block' : 'none';
+
+$('voltage').value = r.voltage || '';
+$('phase').value = r.phase || '';
+$('frequency').value = r.frequency || '';
   $('remarks').value = r.remarks || '';
 
   switchTab('agent');
@@ -554,8 +604,7 @@ function editRequest(id) {
   $('product').value = d.product || '';
   $('productType').value = d.productType || '';
   $('pouchType').value = d.pouchType || '';
-  $('width').value = d.width || '';
-  $('length').value = d.length || '';
+  
   $('fillWeight').value = d.fillWeight || '';
   $('speed').value = d.speed || '';
   $('currentPacking').value = d.currentPacking || '';
