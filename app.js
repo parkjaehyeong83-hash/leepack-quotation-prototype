@@ -394,6 +394,20 @@ function normalizeProductName(value){
    const maxProductCount = productData.length
   ? productData[0][1]
   : 1;
+   const monthlyCounts = {};
+   data.forEach(r => {
+  const d = new Date(r.receivedDate);
+  if (isNaN(d)) return;
+
+  const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+  monthlyCounts[key] = (monthlyCounts[key] || 0) + 1;
+});
+   const monthlyData = Object.entries(monthlyCounts)
+  .sort((a, b) => a[0].localeCompare(b[0]));
+   const maxMonthlyCount = monthlyData.length
+  ? Math.max(...monthlyData.map(([, count]) => count))
+  : 1;
     box.innerHTML = `
       <div class="dashboard-summary">
 
@@ -469,6 +483,25 @@ function normalizeProductName(value){
           }
         </div>
       </div>
+      </div>
+            <div class="dashboard-chart-card dashboard-monthly-card">
+        <h3>Monthly Trend</h3>
+        <div class="dashboard-monthly-bars">
+        ${
+  monthlyData.length
+    ? monthlyData.map(([month, count]) => `
+        <div class="dashboard-monthly-item">
+          <div class="dashboard-monthly-count">${count}</div>
+          <div
+            class="dashboard-monthly-bar"
+            style="height:${(count / maxMonthlyCount) * 100}%"
+          ></div>
+          <div class="dashboard-monthly-label">${esc(month)}</div>
+        </div>
+      `).join('')
+    : '<div class="empty">No monthly data.</div>'
+}
+</div>
       </div>
     `;
 
