@@ -325,12 +325,40 @@ async function renderDashboard(){
       return sorted.length ? sorted[0][0] : '-';
     }
 
-    const topCountry = topValue('country');
+    
     const topProduct = topValue('product');
 const countryCounts = {};
 
+function normalizeCountryName(value){
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+
+  const key = raw.toLowerCase();
+
+  const aliases = {
+    india: 'India',
+    uk: 'UK',
+    'united kingdom': 'UK',
+    usa: 'USA',
+    'united states': 'USA',
+    taiwan: 'Taiwan',
+    peru: 'Peru',
+    russia: 'Russia',
+    spain: 'Spain',
+    denmark: 'Denmark',
+    ghana: 'Ghana',
+    france: 'France',
+    pakistan: 'Pakistan',
+    paraguay: 'Paraguay',
+    bolivia: 'Bolivia'
+  };
+
+  return aliases[key] ||
+    raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+}
+
 data.forEach(r => {
-  const country = String(r.country || '').trim();
+  const country = normalizeCountryName(r.country);
   if (!country) return;
 
   countryCounts[country] = (countryCounts[country] || 0) + 1;
@@ -338,7 +366,7 @@ data.forEach(r => {
 
 const countryData = Object.entries(countryCounts)
   .sort((a, b) => b[1] - a[1]);
-
+const topCountry = countryData.length ? countryData[0][0] : '-';
 const maxCountryCount = countryData.length
   ? countryData[0][1]
   : 1;
