@@ -326,7 +326,7 @@ async function renderDashboard(){
     }
 
     
-    const topProduct = topValue('product');
+    
 const countryCounts = {};
 
 function normalizeCountryName(value){
@@ -370,16 +370,27 @@ const topCountry = countryData.length ? countryData[0][0] : '-';
 const maxCountryCount = countryData.length
   ? countryData[0][1]
   : 1;
-   const productCounts = {};
+   
+const productCounts = {};
 
-data.forEach(r => {
-  const product = String(r.product || '').trim();
+function normalizeProductName(value){
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+
+ return raw
+  .toLowerCase()
+  .replace(/\b\w/g, c => c.toUpperCase())
+  .replace(/\bIqf\b/g, 'IQF');
+}
+   data.forEach(r => {
+  const product = normalizeProductName(r.product);
   if (!product) return;
 
   productCounts[product] = (productCounts[product] || 0) + 1;
 });
    const productData = Object.entries(productCounts)
   .sort((a, b) => b[1] - a[1]);
+   const normalizedTopProduct = productData.length ? productData[0][0] : '-';
    const maxProductCount = productData.length
   ? productData[0][1]
   : 1;
@@ -405,7 +416,7 @@ data.forEach(r => {
 
         <div class="dashboard-card">
           <div class="dashboard-label">TOP PRODUCT</div>
-          <div class="dashboard-value dashboard-text">${topProduct}</div>
+          <div class="dashboard-value dashboard-text">${normalizedTopProduct}</div>
         </div>
 
       </div>
