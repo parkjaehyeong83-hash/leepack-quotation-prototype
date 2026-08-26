@@ -327,7 +327,21 @@ async function renderDashboard(){
 
     const topCountry = topValue('country');
     const topProduct = topValue('product');
+const countryCounts = {};
 
+data.forEach(r => {
+  const country = String(r.country || '').trim();
+  if (!country) return;
+
+  countryCounts[country] = (countryCounts[country] || 0) + 1;
+});
+
+const countryData = Object.entries(countryCounts)
+  .sort((a, b) => b[1] - a[1]);
+
+const maxCountryCount = countryData.length
+  ? countryData[0][1]
+  : 1;
     box.innerHTML = `
       <div class="dashboard-summary">
 
@@ -353,6 +367,30 @@ async function renderDashboard(){
           <div class="dashboard-value dashboard-text">${topProduct}</div>
         </div>
 
+      </div>
+            <div class="dashboard-chart-card">
+        <h3>Requests by Country</h3>
+
+        <div class="dashboard-bars">
+          ${
+            countryData.length
+              ? countryData.map(([country, count]) => `
+                  <div class="dashboard-bar-row">
+                    <div class="dashboard-bar-label">${esc(country)}</div>
+
+                    <div class="dashboard-bar-track">
+                      <div
+                        class="dashboard-bar-fill"
+                        style="width:${(count / maxCountryCount) * 100}%"
+                      ></div>
+                    </div>
+
+                    <div class="dashboard-bar-count">${count}</div>
+                  </div>
+                `).join('')
+              : '<div class="empty">No country data.</div>'
+          }
+        </div>
       </div>
     `;
 
