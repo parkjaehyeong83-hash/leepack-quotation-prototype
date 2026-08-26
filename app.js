@@ -394,6 +394,17 @@ function normalizeProductName(value){
    const maxProductCount = productData.length
   ? productData[0][1]
   : 1;
+   const productTypeCounts = {};
+   data.forEach(r => {
+  const type = String(r.productType || '').trim();
+  if (!type) return;
+
+  productTypeCounts[type] = (productTypeCounts[type] || 0) + 1;
+});
+   const productTypeData = Object.entries(productTypeCounts)
+  .sort((a, b) => b[1] - a[1]);
+   const totalProductTypeCount = productTypeData.reduce((sum, [, count]) => sum + count, 0);
+   let productTypeOffset = 0;
    const monthlyCounts = {};
    data.forEach(r => {
   const d = new Date(r.receivedDate);
@@ -484,8 +495,72 @@ function normalizeProductName(value){
         </div>
       </div>
       </div>
-            <div class="dashboard-chart-card dashboard-monthly-card">
-        <h3>Monthly Trend</h3>
+      <div class="dashboard-charts-grid">
+      <div class="dashboard-chart-card dashboard-product-type-card">
+  <h3>Requests by Product Type</h3>
+  <div class="dashboard-donut-wrap">
+  <div class="dashboard-donut">
+  <svg viewBox="0 0 120 120" class="dashboard-donut-svg">
+  <circle
+    cx="60"
+    cy="60"
+    r="45"
+    fill="none"
+    stroke="#edf2f6"
+    stroke-width="18"
+  ></circle>
+ ${
+  productTypeData.map(([type, count], index) => {
+    const circumference = 2 * Math.PI * 45;
+    const percent = totalProductTypeCount
+      ? count / totalProductTypeCount
+      : 0;
+
+    const dash = percent * circumference;
+    const gap = circumference - dash;
+    const offset = -productTypeOffset * circumference;
+
+    productTypeOffset += percent;
+
+    return `
+      <circle
+        cx="60"
+        cy="60"
+        r="45"
+        fill="none"
+        stroke="hsl(${index * 65}, 65%, 50%)"
+        stroke-width="18"
+        stroke-dasharray="${dash} ${gap}"
+        stroke-dashoffset="${offset}"
+        transform="rotate(-90 60 60)"
+      ></circle>
+    `;
+  }).join('')
+}
+</svg>
+<div class="dashboard-donut-center">
+  <strong>${totalProductTypeCount}</strong>
+  <span>Total</span>
+</div>
+  </div>
+  <div class="dashboard-donut-legend">
+  ${
+  productTypeData.map(([type, count], index) => `
+    <div class="dashboard-donut-legend-item">
+      <span
+        class="dashboard-donut-dot"
+        style="background:hsl(${index * 65}, 65%, 50%)"
+      ></span>
+      <span>${esc(type)}</span>
+      <strong>${count}</strong>
+    </div>
+  `).join('')
+}
+</div>
+  </div>
+</div>
+            <div class="dashboard-chart-card dashboard-monthly-card">            
+        <h3>Monthly Trend</h3>        
         <div class="dashboard-monthly-bars">
         ${
   monthlyData.length
