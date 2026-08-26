@@ -370,6 +370,19 @@ const topCountry = countryData.length ? countryData[0][0] : '-';
 const maxCountryCount = countryData.length
   ? countryData[0][1]
   : 1;
+   const productCounts = {};
+
+data.forEach(r => {
+  const product = String(r.product || '').trim();
+  if (!product) return;
+
+  productCounts[product] = (productCounts[product] || 0) + 1;
+});
+   const productData = Object.entries(productCounts)
+  .sort((a, b) => b[1] - a[1]);
+   const maxProductCount = productData.length
+  ? productData[0][1]
+  : 1;
     box.innerHTML = `
       <div class="dashboard-summary">
 
@@ -417,6 +430,30 @@ const maxCountryCount = countryData.length
                   </div>
                 `).join('')
               : '<div class="empty">No country data.</div>'
+          }
+        </div>
+      </div>
+          <div class="dashboard-chart-card">
+        <h3>Requests by Product</h3>
+
+        <div class="dashboard-bars">
+          ${
+            productData.length
+              ? productData.map(([product, count]) => `
+                  <div class="dashboard-bar-row">
+                    <div class="dashboard-bar-label">${esc(product)}</div>
+
+                    <div class="dashboard-bar-track">
+                      <div
+                        class="dashboard-bar-fill"
+                        style="width:${(count / maxProductCount) * 100}%"
+                      ></div>
+                    </div>
+
+                    <div class="dashboard-bar-count">${count}</div>
+                  </div>
+                `).join('')
+              : '<div class="empty">No product data.</div>'
           }
         </div>
       </div>
