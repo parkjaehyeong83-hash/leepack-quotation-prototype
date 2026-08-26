@@ -532,7 +532,41 @@
   font-weight:700;
   text-align:right;
 }
-
+.dashboard-monthly-card{
+  margin-top:16px;
+}
+    .dashboard-monthly-bars{
+  height:220px;
+  display:flex;
+  align-items:flex-end;
+  gap:12px;
+  padding-top:20px;
+}
+    .dashboard-monthly-item{
+  flex:1;
+  height:100%;
+  min-width:50px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+}
+    .dashboard-monthly-count{
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+    .dashboard-monthly-bar{
+  width:32px;
+  min-height:4px;
+  background:#0b7fb8;
+  border-radius:6px 6px 0 0;
+}
+    .dashboard-monthly-label{
+  font-size:12px;
+  margin-top:8px;
+  white-space:nowrap;
+}
 @media(max-width:600px){
   .dashboard-bar-row{
     grid-template-columns:80px 1fr 30px;
