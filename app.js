@@ -206,7 +206,7 @@ action:isEditing ? 'UPDATE' : 'NEW',
         fillingWeight:d.fillWeight,
         requiredSpeed:d.speed,
         currentPacking:d.currentPacking,
-        existingEquipment:d.existingEquipment,
+       existingEquipment:d.existing,
         incoterms:d.incoterms,
 incotermsOther:d.incotermsOther,
 voltage:d.voltage,
@@ -564,7 +564,8 @@ editPouchSizes.forEach((size, index) => {
   $('speed').value = r.requiredSpeed || '';
   $('currentPacking').value = r.currentPacking || '';
   $('existing').value = r.existingEquipment || '';
-  $('deliveryDate').value = r.deliveryDate || '';
+ $('deliveryDate').value =
+  r.deliveryDate ? String(r.deliveryDate).slice(0, 10) : '';
 
 $('incoterms').value = r.incoterms || '';
 $('incotermsOther').value = r.incotermsOther || '';
