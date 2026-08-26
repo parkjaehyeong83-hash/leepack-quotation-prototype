@@ -420,6 +420,7 @@ function normalizeProductName(value){
         </div>
 
       </div>
+      <div class="dashboard-charts-grid">
             <div class="dashboard-chart-card">
         <h3>Requests by Country</h3>
 
@@ -467,6 +468,7 @@ function normalizeProductName(value){
               : '<div class="empty">No product data.</div>'
           }
         </div>
+      </div>
       </div>
     `;
 
