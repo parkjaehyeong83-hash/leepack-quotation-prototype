@@ -715,12 +715,15 @@ function resetRequestForm() {
   const pouchSizeList = $('pouchSizeList');
 pouchSizeList.innerHTML = `
   <div class="pouch-size-row">
-    <input type="number" class="pouchWidth" placeholder="Width">
-    <span>×</span>
-    <input type="number" class="pouchLength" placeholder="Length">
+    <div class="pouch-size-inputs">
+      <input type="number" class="pouchWidth" placeholder="Width">
+      <span>×</span>
+      <input type="number" class="pouchLength" placeholder="Length">
+      <input type="text" class="pouchFillWeight" placeholder="Filling weight">
+   
   </div>
 `;
-  $('fillWeight').value = '';
+ 
   $('speed').value = '';
   $('currentPacking').value = '';
   $('existing').value = '';
