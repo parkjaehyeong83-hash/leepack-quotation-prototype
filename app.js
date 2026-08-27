@@ -680,6 +680,8 @@ if (CURRENT_AGENT.role === 'admin') {
   // Admin: New Request 숨김, 전체 문의만 표시
   newRequestTab.style.display = 'none';
   requestsTab.textContent = 'All Requests';
+ document.getElementById('requestsTitle').textContent = 'All Requests';
+document.getElementById('requestsDescription').textContent = 'All quotation requests submitted by agents are shown here.';
 dashboardTab.style.display = '';
   switchTab('myRequests');
   renderMyRequests();
@@ -688,6 +690,8 @@ dashboardTab.style.display = '';
   // Dealer: 기존 화면 유지
   newRequestTab.style.display = '';
   requestsTab.textContent = 'My Requests';
+ document.getElementById('requestsTitle').textContent = 'My Requests';
+document.getElementById('requestsDescription').textContent = 'Only quotation requests submitted using your Agent ID are shown here.';
 dashboardTab.style.display = 'none';
   resetRequestForm();
   switchTab('agent');
@@ -831,7 +835,7 @@ const adminFilterHtml =
 </td>
             
               <td>${esc(r.status || '')}</td>
-              <td><button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button></td>
+             <td>${CURRENT_AGENT.role === 'admin' ? '-' : `<button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button>`}</td>
             </tr>
           `).join('')}
         </tbody>
