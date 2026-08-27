@@ -55,10 +55,11 @@ function getPouchSizes() {
     .map(row => {
       const width = row.querySelector('.pouchWidth').value.trim();
       const length = row.querySelector('.pouchLength').value.trim();
-
+const fillWeight = row.querySelector('.pouchFillWeight').value.trim();
       return {
         width: width,
-        length: length
+       length: length,
+fillWeight: fillWeight
       };
     });
 } 
@@ -73,7 +74,7 @@ function getAgentData(){return {
   productType:$('productType').value,
   pouchType:$('pouchType').value,
   pouchSizes:getPouchSizes(),
-  fillWeight:$('fillWeight').value.trim(),
+
   speed:Number($('speed').value),
   currentPacking:$('currentPacking').value,
   existing:$('existing').value.trim(),
@@ -95,16 +96,16 @@ async function submitData(d){
   ['productType', 'Product type'],
   ['pouchType', 'Pouch type'],
   
-  ['fillWeight', 'Filling weight'],
+  
   ['speed', 'Required speed']
 ];
 const pouchSizes = getPouchSizes();
 
 if (
   pouchSizes.length === 0 ||
-  pouchSizes.some(size => !size.width || !size.length)
+  pouchSizes.some(size => !size.width || !size.length || !size.fillWeight)
 ) {
-  alert('Please enter at least one complete pouch size.');
+  alert('Please enter pouch size and filling weight for each pouch.');
   return;
 }
 for (const [id, label] of requiredFields) {
@@ -203,7 +204,7 @@ action:isEditing ? 'UPDATE' : 'NEW',
         productType:d.productType,
         pouchType:d.pouchType,
         pouchSizes:d.pouchSizes,
-        fillingWeight:d.fillWeight,
+       
         requiredSpeed:d.speed,
         currentPacking:d.currentPacking,
        existingEquipment:d.existing,
@@ -229,13 +230,15 @@ frequency:d.frequency,
   const row = document.createElement('div');
   row.className = 'pouch-size-row';
 
-  row.innerHTML = `
+ row.innerHTML = `
+  <div class="pouch-size-inputs">
     <input type="number" class="pouchWidth" placeholder="Width">
     <span>×</span>
     <input type="number" class="pouchLength" placeholder="Length">
-    <button type="button" class="removePouchSize">Remove</button>
-  `;
-
+    <input type="text" class="pouchFillWeight" placeholder="Filling weight">
+  </div>
+  <button type="button" class="removePouchSize">Remove</button>
+`;
   row.querySelector('.removePouchSize').onclick = () => {
     row.remove();
   };
@@ -273,9 +276,9 @@ window.openReview=function(id){const arr=requests();const r=arr.find(x=>x.id===i
    <div class="card analysis-card"><h2>AI / Rule Analysis</h2>${summaryHtml(d,a)}<h3>Compatible candidates</h3>${candidates}<h3>Excluded models</h3><ul>${excluded}</ul><h3>Required options</h3><ul>${opts}</ul><h3>Sales review</h3><div class="note"><ul>${reviews}</ul></div><div class="actions no-print"><button class="primary" onclick="approve('${r.id}')">Approve Draft</button><button class="secondary" onclick="window.print()">Print / Save PDF</button><button class="secondary" onclick="downloadRecord('${r.id}')">Download record CSV</button></div></div>
    ${quoteHtml(r)}
  </div>`;};
-function quoteHtml(r){const d=r.data,a=r.analysis,m=a.recommended;return `<div class="quote"><div class="test">PROTOTYPE / TEST PRICE — NOT FOR CUSTOMER USE</div><h2>QUOTATION — DRAFT</h2><div class="quote-row"><b>To.</b><span>${esc(d.company)} / ${esc(d.country)}</span></div><div class="quote-row"><b>Quotation No.</b><span>${r.id}</span></div><div class="quote-row"><b>Main model</b><span>${m?m.model:'SALES REVIEW REQUIRED'}</span></div><h3>APPLICATION SPECIFICATION</h3><div class="quote-row"><b>Product</b><span>${esc(d.product)}</span></div><div class="quote-row"><b>Product type</b><span>${esc(d.productType)}</span></div><div class="quote-row"><b>Filling weight per pouch</b><span>${esc(d.fillWeight)}</span></div><div class="quote-row"><b>Pouch type</b><span>${esc(d.pouchType)}</span></div><div class="quote-row"><b>Pouch size</b><span>W ${d.width||'-'} × L ${d.length||'-'} mm</span></div><div class="quote-row"><b>Required speed</b><span>${d.speed||'-'} BPM</span></div><h3>MACHINE CONFIGURATION</h3><div class="quote-row"><b>Basic machine</b><span>${m?`${m.model} — ${money(m.price)} (TEST)`:'TBD'}</span></div>${a.options.map(o=>`<div class="quote-row"><b>Option</b><span>${esc(o.name)} — ${money(o.price)} (TEST)</span></div>`).join('')}<div class="quote-row"><b>Prototype total</b><span><strong>${a.total?money(a.total):'TBD'}</strong></span></div><h3>PRICE TERMS & CONDITION</h3><div class="quote-row"><b>Origin</b><span>South Korea</span></div><div class="quote-row"><b>Delivery Terms</b><span>FOB</span></div><div class="quote-row"><b>Delivery Time</b><span>Sales review required</span></div><div class="quote-row"><b>Validity</b><span>30 days from the date of issue</span></div><p class="muted" style="margin-top:20px">This prototype mirrors the structure of the supplied AI test.xlsx quotation template. Final price, filler selection, technical configuration and delivery terms require sales review.</p></div>`;}
+function quoteHtml(r){const d=r.data,a=r.analysis,m=a.recommended;return `<div class="quote"><div class="test">PROTOTYPE / TEST PRICE — NOT FOR CUSTOMER USE</div><h2>QUOTATION — DRAFT</h2><div class="quote-row"><b>To.</b><span>${esc(d.company)} / ${esc(d.country)}</span></div><div class="quote-row"><b>Quotation No.</b><span>${r.id}</span></div><div class="quote-row"><b>Main model</b><span>${m?m.model:'SALES REVIEW REQUIRED'}</span></div><h3>APPLICATION SPECIFICATION</h3><div class="quote-row"><b>Product</b><span>${esc(d.product)}</span></div><div class="quote-row"><b>Product type</b><span>${esc(d.productType)}</span></div><div class="quote-row"><b>Filling weight per pouch</b><span>${esc((d.pouchSizes || []).map(s => s.fillWeight || '').filter(Boolean).join(' / '))}</span></div><div class="quote-row"><b>Pouch type</b><span>${esc(d.pouchType)}</span></div><div class="quote-row"><b>Pouch size</b><span>W ${d.width||'-'} × L ${d.length||'-'} mm</span></div><div class="quote-row"><b>Required speed</b><span>${d.speed||'-'} BPM</span></div><h3>MACHINE CONFIGURATION</h3><div class="quote-row"><b>Basic machine</b><span>${m?`${m.model} — ${money(m.price)} (TEST)`:'TBD'}</span></div>${a.options.map(o=>`<div class="quote-row"><b>Option</b><span>${esc(o.name)} — ${money(o.price)} (TEST)</span></div>`).join('')}<div class="quote-row"><b>Prototype total</b><span><strong>${a.total?money(a.total):'TBD'}</strong></span></div><h3>PRICE TERMS & CONDITION</h3><div class="quote-row"><b>Origin</b><span>South Korea</span></div><div class="quote-row"><b>Delivery Terms</b><span>FOB</span></div><div class="quote-row"><b>Delivery Time</b><span>Sales review required</span></div><div class="quote-row"><b>Validity</b><span>30 days from the date of issue</span></div><p class="muted" style="margin-top:20px">This prototype mirrors the structure of the supplied AI test.xlsx quotation template. Final price, filler selection, technical configuration and delivery terms require sales review.</p></div>`;}
 window.approve=function(id){const arr=requests(),r=arr.find(x=>x.id===id);if(!r)return;r.status='Approved (Prototype)';saveRequests(arr);renderList();openReview(id);};
-window.downloadRecord=function(id){const r=requests().find(x=>x.id===id);if(!r)return;const d=r.data,a=r.analysis;const rows=[['Request No','Source','Customer','Country','Location','Product','Product Type','Pouch Type','Width mm','Length mm','Filling Weight','Required Speed','Current Packing','Existing Equipment','Required Stations','Recommended Model','Options','Prototype Total','Status'],[r.id,d.source,d.company,d.country,d.location,d.product,d.productType,d.pouchType,d.width,d.length,d.fillWeight,d.speed,d.currentPacking,d.existing,a.requiredStations,a.recommended?.model||'',a.options.map(x=>x.name).join(' / '),a.total,r.status]];const csv=rows.map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const x=document.createElement('a');x.href=url;x.download=`${r.id}_quotation_record.csv`;x.click();URL.revokeObjectURL(url);};
+window.downloadRecord=function(id){const r=requests().find(x=>x.id===id);if(!r)return;const d=r.data,a=r.analysis;const rows=[['Request No','Source','Customer','Country','Location','Product','Product Type','Pouch Type','Width mm','Length mm','Filling Weight','Required Speed','Current Packing','Existing Equipment','Required Stations','Recommended Model','Options','Prototype Total','Status'],[r.id,d.source,d.company,d.country,d.location,d.product,d.productType,d.pouchType,d.width,d.length,(d.pouchSizes || []).map(s => s.fillWeight || '').filter(Boolean).join(' / '),d.speed,d.currentPacking,d.existing,a.requiredStations,a.recommended?.model||'',a.options.map(x=>x.name).join(' / '),a.total,r.status]];const csv=rows.map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const x=document.createElement('a');x.href=url;x.download=`${r.id}_quotation_record.csv`;x.click();URL.revokeObjectURL(url);};
 function switchTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='dashboard')renderDashboard();}
 async function renderDashboard(){
   const box = $('dashboardContent');
@@ -887,6 +890,7 @@ editPouchSizes.forEach((size, index) => {
   row.className = 'pouch-size-row';
 
   row.innerHTML = `
+  <div class="pouch-size-inputs">
     <input
       type="number"
       class="pouchWidth"
@@ -900,10 +904,17 @@ editPouchSizes.forEach((size, index) => {
       placeholder="Length"
       value="${size.length || ''}"
     >
-    ${index > 0
-      ? '<button type="button" class="removePouchSize">Remove</button>'
-      : ''}
-  `;
+    <input
+      type="text"
+      class="pouchFillWeight"
+      placeholder="Filling weight"
+      value="${size.fillWeight || ''}"
+    >
+  </div>
+  ${index > 0
+    ? '<button type="button" class="removePouchSize">Remove</button>'
+    : ''}
+`;
 
   const removeBtn = row.querySelector('.removePouchSize');
 
@@ -915,7 +926,7 @@ editPouchSizes.forEach((size, index) => {
 });
   
   
-  $('fillWeight').value = r.fillingWeight || '';
+
   $('speed').value = r.requiredSpeed || '';
   $('currentPacking').value = r.currentPacking || '';
   $('existing').value = r.existingEquipment || '';
@@ -962,7 +973,7 @@ function editRequest(id) {
   $('productType').value = d.productType || '';
   $('pouchType').value = d.pouchType || '';
   
-  $('fillWeight').value = d.fillWeight || '';
+  
   $('speed').value = d.speed || '';
   $('currentPacking').value = d.currentPacking || '';
   $('existing').value = d.existing || '';
