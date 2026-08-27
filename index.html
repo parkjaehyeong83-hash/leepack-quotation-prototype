@@ -597,37 +597,38 @@
   font-weight:700;
   text-align:right;
 }
-    .dashboard-monthly-bars{
+   .dashboard-line-chart{
+  width:100%;
   height:220px;
-  display:flex;
-  align-items:flex-end;
-  gap:12px;
-  padding-top:20px;
 }
-    .dashboard-monthly-item{
-  flex:1;
+    .dashboard-line-svg{
+  width:100%;
   height:100%;
-  min-width:50px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  align-items:center;
+  display:block;
 }
-    .dashboard-monthly-count{
+    .dashboard-grid-line{
+  stroke:#e2e8f0;
+  stroke-width:1;
+}
+    .dashboard-trend-line{
+  stroke:#0b7fb8;
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+    .dashboard-trend-point{
+  fill:#0b7fb8;
+  stroke:#ffffff;
+  stroke-width:2;
+}
+    .dashboard-trend-value{
   font-size:13px;
   font-weight:700;
-  margin-bottom:6px;
+  fill:#0f172a;
 }
-    .dashboard-monthly-bar{
-  width:32px;
-  min-height:4px;
-  background:#0b7fb8;
-  border-radius:6px 6px 0 0;
-}
-    .dashboard-monthly-label{
+    .dashboard-trend-label{
   font-size:12px;
-  margin-top:8px;
-  white-space:nowrap;
+  fill:#475569;
 }
 @media(max-width:600px){
   .dashboard-donut-wrap{
