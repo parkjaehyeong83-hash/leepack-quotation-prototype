@@ -807,7 +807,7 @@ const adminFilterHtml =
             <th>Model</th>
             <th>Attachment</th>
             <th>Status</th>
-            <th>Action</th>
+            ${CURRENT_AGENT.role === 'admin' ? '' : '<th>Edit</th>'}
           </tr>
         </thead>
         <tbody>
@@ -835,7 +835,7 @@ const adminFilterHtml =
 </td>
             
               <td>${esc(r.status || '')}</td>
-             <td>${CURRENT_AGENT.role === 'admin' ? '-' : `<button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button>`}</td>
+            ${CURRENT_AGENT.role === 'admin' ? '' : `<td><button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button></td>`}
             </tr>
           `).join('')}
         </tbody>
