@@ -419,6 +419,15 @@ function normalizeProductName(value){
    const maxMonthlyCount = monthlyData.length
   ? Math.max(...monthlyData.map(([, count]) => count))
   : 1;
+   const chartWidth = 520;
+   const chartHeight = 140;
+   const monthlyPoints = [];
+   monthlyData.forEach(([month, count], index) => {
+    const x = 50 + (monthlyData.length === 1 ? chartWidth / 2 : (index / (monthlyData.length - 1)) * chartWidth);
+    const y = 180 - (count / maxMonthlyCount) * chartHeight;
+    monthlyPoints.push({ month, count, x, y });
+});
+   const monthlyPolyline = monthlyPoints.map(p => `${p.x},${p.y}`).join(' ');
     box.innerHTML = `
       <div class="dashboard-summary">
 
@@ -561,21 +570,52 @@ function normalizeProductName(value){
 </div>
             <div class="dashboard-chart-card dashboard-monthly-card">            
         <h3>Monthly Trend</h3>        
-        <div class="dashboard-monthly-bars">
-        ${
-  monthlyData.length
-    ? monthlyData.map(([month, count]) => `
-        <div class="dashboard-monthly-item">
-          <div class="dashboard-monthly-count">${count}</div>
-          <div
-            class="dashboard-monthly-bar"
-            style="height:${(count / maxMonthlyCount) * 100}%"
-          ></div>
-          <div class="dashboard-monthly-label">${esc(month)}</div>
-        </div>
-      `).join('')
-    : '<div class="empty">No monthly data.</div>'
+        <div class="dashboard-line-chart">
+  <svg viewBox="0 0 600 220" class="dashboard-line-svg">
+  <line x1="50" y1="40" x2="570" y2="40" class="dashboard-grid-line"></line>
+<line x1="50" y1="110" x2="570" y2="110" class="dashboard-grid-line"></line>
+<line x1="50" y1="180" x2="570" y2="180" class="dashboard-grid-line"></line>
+${
+  monthlyPoints.length > 1
+    ? `<polyline
+        points="${monthlyPolyline}"
+        class="dashboard-trend-line"
+        fill="none"
+      ></polyline>`
+    : ''
 }
+${
+  monthlyPoints.map(p => `
+    <circle
+      cx="${p.x}"
+      cy="${p.y}"
+      r="5"
+      class="dashboard-trend-point"
+    ></circle>
+  `).join('')
+}
+  
+  ${
+  monthlyPoints.map(p => `
+    <text
+      x="${p.x}"
+      y="${p.y - 12}"
+      class="dashboard-trend-value"
+      text-anchor="middle"
+    >${p.count}</text>
+  `).join('')
+}
+${
+  monthlyPoints.map(p => `
+    <text
+      x="${p.x}"
+      y="205"
+      class="dashboard-trend-label"
+      text-anchor="middle"
+    >${esc(p.month)}</text>
+  `).join('')
+}
+</svg>
 </div>
       </div>
     `;
