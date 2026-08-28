@@ -75,7 +75,7 @@ function getAgentData(){return {
   pouchType:$('pouchType').value,
   pouchSizes:getPouchSizes(),
 
-  speed:Number($('speed').value),
+  speed:$('speed').value.trim(),
   currentPacking:$('currentPacking').value,
   existing:$('existing').value.trim(),
   incoterms:$('incoterms').value,
@@ -261,7 +261,7 @@ function parseEmailDemo(t){
  const company=(s.match(/(?:are|from)\s+([A-Z][A-Za-z0-9 &.-]{2,40}?)(?:\s+in\s+|\.|,)/)||[])[1]||'Customer Review Required';
  const size=s.match(/(\d{2,3})\s*[x×]\s*(\d{2,3})\s*mm/i); const fill=s.match(/(\d+(?:\.\d+)?)\s*(g|kg|ml|l)\b/i); const speed=s.match(/(\d+)\s*(?:bags?|pouches?)\s*\/\s*min|(?:speed[^0-9]{0,15})(\d+)/i);
  const zipper=/zipper/i.test(s), stand=/stand[- ]?up/i.test(s), liquid=/liquid|sauce|water|juice|oil/i.test(s), powder=/powder|coffee|flour|spice/i.test(s);
- return {source:'Customer Email Demo',country,company,location:'',product:(s.match(/(?:for|pack)\s+(?:\d+\s*(?:g|kg|ml|l)\s+)?([A-Za-z ]{3,30}?)(?:\s+in\s+|,|\.)/i)||[])[1]?.trim()||'Product Review Required',productType:liquid?'Liquid':powder?'Powder':'Other',pouchType:zipper&&stand?'Zipper Stand-up':zipper?'Zipper Stand-up':stand?'Stand-up':'Other',width:size?Number(size[1]):0,length:size?Number(size[2]):0,fillWeight:fill?`${fill[1]} ${fill[2]}`:'Review Required',speed:speed?Number(speed[1]||speed[2]):0,currentPacking:/manual/i.test(s)?'Manual':'Review Required',existing:'Review Required',remarks:'Parsed by offline demo rules — final system will use AI analysis.'};
+ return {source:'Customer Email Demo',country,company,location:'',product:(s.match(/(?:for|pack)\s+(?:\d+\s*(?:g|kg|ml|l)\s+)?([A-Za-z ]{3,30}?)(?:\s+in\s+|,|\.)/i)||[])[1]?.trim()||'Product Review Required',productType:liquid?'Liquid':powder?'Powder':'Other',pouchType:zipper&&stand?'Zipper Stand-up':zipper?'Zipper Stand-up':stand?'Stand-up':'Other',width:size?Number(size[1]):0,length:size?Number(size[2]):0,fillWeight:fill?`${fill[1]} ${fill[2]}`:'Review Required',speed:speed?(speed[1]||speed[2]||'').trim():'',currentPacking:/manual/i.test(s)?'Manual':'Review Required',existing:'Review Required',remarks:'Parsed by offline demo rules — final system will use AI analysis.'};
 }
 $('analyzeEmail').onclick=()=>{const d=parseEmailDemo($('emailText').value);const a=analyze(d);$('emailResult').innerHTML=`<div class="card" style="margin-top:14px"><h3>Extracted information</h3>${summaryHtml(d,a)}<div class="actions"><button class="primary" id="saveEmailReq">Save to quotation workflow</button></div></div>`;$('saveEmailReq').onclick=()=>submitData(d);};
 
