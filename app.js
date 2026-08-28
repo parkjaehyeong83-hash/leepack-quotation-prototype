@@ -705,7 +705,7 @@ dashboardTab.style.display = 'none';
 }
 function resetRequestForm() {
   EDITING_REQUEST_ID = null;
-
+$('cancelEdit').style.display = 'none';
   $('country').value = '';
   $('company').value = '';
   $('location').value = '';
@@ -1081,7 +1081,7 @@ function editDbRequest(id) {
   }
 
   EDITING_REQUEST_ID = id;
-
+$('cancelEdit').style.display = 'inline-block';
   $('country').value = r.country || '';
   $('company').value = r.customer || '';
   $('location').value = r.location || '';
@@ -1196,6 +1196,13 @@ function editRequest(id) {
 }
 $('loginBtn').onclick = dealerLogin;
 $('logoutBtn').onclick = dealerLogout;
+$('cancelEdit').onclick = () => {
+  EDITING_REQUEST_ID = null;
+  resetRequestForm();
+  $('cancelEdit').style.display = 'none';
+  switchTab('myRequests');
+  renderMyRequests();
+};
 document
   .querySelector('[data-tab="agent"]')
   .addEventListener('click', () => {
