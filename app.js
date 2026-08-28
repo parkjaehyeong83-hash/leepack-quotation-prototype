@@ -254,7 +254,7 @@ $('incoterms').addEventListener('change', () => {
   }
 });
 $('submitAgent').onclick=()=>submitData(getAgentData());
-$('resetDemo').onclick=()=>{localStorage.removeItem('leepack_requests');localStorage.removeItem('leepack_seq');renderList();$('reviewArea').innerHTML='';};
+
 
 function parseEmailDemo(t){
  const s=t.replace(/\n/g,' '); const country=(s.match(/\b(India|USA|United States|Korea|South Korea|Japan|China|Thailand|Vietnam|Indonesia|Malaysia|Australia|New Zealand|Germany|France|UK|United Kingdom)\b/i)||[])[1]||'Country Review Required';
