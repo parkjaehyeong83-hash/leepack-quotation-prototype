@@ -813,7 +813,7 @@ const adminFilterHtml =
             <th>Model</th>
             <th>Attachment</th>
             <th>Status</th>
-            ${CURRENT_AGENT.role === 'admin' ? '' : '<th>Edit</th>'}
+      ${CURRENT_AGENT.role === 'admin' ? '' : '<th>View / Edit</th>'}
           </tr>
         </thead>
         <tbody>
@@ -841,7 +841,12 @@ const adminFilterHtml =
 </td>
             
               <td>${esc(r.status || '')}</td>
-            ${CURRENT_AGENT.role === 'admin' ? '' : `<td><button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button></td>`}
+           ${CURRENT_AGENT.role === 'admin' ? '' : `
+  <td>
+    <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>
+    <button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button>
+  </td>
+`}
             </tr>
           `).join('')}
         </tbody>
@@ -853,6 +858,209 @@ const adminFilterHtml =
     box.innerHTML =
       '<div class="empty">Failed to load requests from database.</div>';
   }
+}
+function viewDbRequest(id) {
+  const r = DB_REQUESTS.find(
+    x => x.requestId === id
+  );
+
+  if (!r) {
+    alert('Request data not found.');
+    return;
+  }
+
+  if (
+    !CURRENT_AGENT ||
+    (
+      CURRENT_AGENT.role !== 'admin' &&
+      r.agentId !== CURRENT_AGENT.id
+    )
+  ) {
+    alert('You can only view your own requests.');
+    return;
+  }
+
+  const box = $('myRequestsList');
+
+  const pouchSizes =
+    Array.isArray(r.pouchSizes) && r.pouchSizes.length
+      ? r.pouchSizes
+      : [];
+
+  const pouchSizeHtml = pouchSizes.length
+    ? pouchSizes.map((p, i) => `
+        <div style="margin-bottom:6px;">
+          ${i + 1}.
+          ${esc(p.width || '')}
+          ×
+          ${esc(p.length || '')} mm
+          ${p.fillWeight ? ` / Filling weight: ${esc(p.fillWeight)}` : ''}
+        </div>
+      `).join('')
+    : '-';
+
+  const attachmentHtml = r.attachments
+    ? r.attachments.split('\n').map((item, i) => {
+        const pos = item.indexOf(': ');
+        const url = pos >= 0 ? item.slice(pos + 2) : '';
+
+        return url
+          ? `<a href="${esc(url)}"
+                target="_blank"
+                rel="noopener">
+               View${r.attachments.includes('\n') ? ' ' + (i + 1) : ''}
+             </a>`
+          : esc(item);
+      }).join('<br>')
+    : '-';
+
+  box.innerHTML = `
+    <div style="margin-bottom:16px;">
+      <button
+        type="button"
+        onclick="renderMyRequests()">
+        ← Back to My Requests
+      </button>
+    </div>
+
+    <h3>Quotation Request Details</h3>
+
+    <table>
+      <tbody>
+        <tr>
+          <th>Request ID</th>
+          <td>${esc(r.requestId || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Date</th>
+          <td>${esc(r.receivedDate || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Agent ID</th>
+          <td>${esc(r.agentId || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>${esc(r.status || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Country</th>
+          <td>${esc(r.country || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Customer company</th>
+          <td>${esc(r.customer || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Location</th>
+          <td>${esc(r.location || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Requested delivery date</th>
+          <td>${esc(
+            r.deliveryDate
+              ? String(r.deliveryDate).slice(0, 10)
+              : ''
+          )}</td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>${esc(r.product || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Product type</th>
+          <td>${esc(r.productType || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Pouch type</th>
+          <td>${esc(r.pouchType || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Pouch size / Filling weight</th>
+          <td>${pouchSizeHtml}</td>
+        </tr>
+
+        <tr>
+          <th>Required speed</th>
+          <td>${esc(r.requiredSpeed || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Current packing method</th>
+          <td>${esc(r.currentPacking || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Existing automation equipment</th>
+          <td>${esc(r.existingEquipment || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Incoterms</th>
+          <td>
+            ${esc(r.incoterms || '')}
+            ${
+              r.incoterms === 'Others' && r.incotermsOther
+                ? ` - ${esc(r.incotermsOther)}`
+                : ''
+            }
+          </td>
+        </tr>
+
+        <tr>
+          <th>Factory power supply</th>
+          <td>
+            ${esc(r.voltage || '')}
+            ${r.voltage ? ' V' : ''}
+            ${
+              r.phase
+                ? ` / ${esc(r.phase)} Ph`
+                : ''
+            }
+            ${
+              r.frequency
+                ? ` / ${esc(r.frequency)} Hz`
+                : ''
+            }
+          </td>
+        </tr>
+
+        <tr>
+          <th>Remarks</th>
+          <td>${esc(r.remarks || '')}</td>
+        </tr>
+
+        <tr>
+          <th>Attachment</th>
+          <td>${attachmentHtml}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:16px;">
+      <button
+        type="button"
+        onclick="renderMyRequests()">
+        ← Back to My Requests
+      </button>
+    </div>
+  `;
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 function editDbRequest(id) {
   const r = DB_REQUESTS.find(
