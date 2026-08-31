@@ -56,10 +56,12 @@ function getPouchSizes() {
       const width = row.querySelector('.pouchWidth').value.trim();
       const length = row.querySelector('.pouchLength').value.trim();
 const fillWeight = row.querySelector('.pouchFillWeight').value.trim();
+     const pouchType = row.querySelector('.pouchTypeRow').value;
       return {
         width: width,
        length: length,
-fillWeight: fillWeight
+fillWeight: fillWeight,
+pouchType: pouchType
       };
     });
 } 
@@ -75,7 +77,7 @@ submitterEmail:$('submitterEmail').value.trim(),
  
   product:$('product').value.trim(),
   productType:$('productType').value,
-  pouchType:$('pouchType').value,
+  
   pouchSizes:getPouchSizes(),
 
   speed:$('speed').value.trim(),
@@ -99,7 +101,7 @@ async function submitData(d){
 ['submitterEmail', 'Submitter email'],
   ['product', 'Product'],
   ['productType', 'Product type'],
-  ['pouchType', 'Pouch type'],
+
   
   
   ['speed', 'Required speed']
@@ -108,9 +110,9 @@ const pouchSizes = getPouchSizes();
 
 if (
   pouchSizes.length === 0 ||
-  pouchSizes.some(size => !size.width || !size.length || !size.fillWeight)
+ pouchSizes.some(size => !size.width || !size.length || !size.fillWeight || !size.pouchType)
 ) {
-  alert('Please enter pouch size and filling weight for each pouch.');
+alert('Please enter pouch size, filling weight and pouch type for each pouch.');
   return;
 }
 for (const [id, label] of requiredFields) {
@@ -209,7 +211,7 @@ submitterEmail: d.submitterEmail,
         deliveryDate:d.deliveryDate,                   
         product:d.product,
         productType:d.productType,
-        pouchType:d.pouchType,
+        
         pouchSizes:d.pouchSizes,
        
         requiredSpeed:d.speed,
@@ -233,7 +235,7 @@ frequency:d.frequency,
   switchTab('review');
  EDITING_REQUEST_ID = null;
  resetRequestForm();
-}$('addPouchSizeBtn').onclick = () => {
+}$('addPouchSizeBtn').onclick = () => {function getPouchSizes
   const row = document.createElement('div');
   row.className = 'pouch-size-row';
 
@@ -243,6 +245,15 @@ frequency:d.frequency,
     <span>×</span>
     <input type="number" class="pouchLength" placeholder="Length">
     <input type="text" class="pouchFillWeight" placeholder="Filling weight">
+    <select class="pouchTypeRow">
+  <option value="">Select pouch type</option>
+  <option>Zipper Stand-up</option>
+  <option>Stand-up</option>
+  <option>Flat pouch</option>
+  <option>Spout</option>
+  <option>Pillow</option>
+  <option>Other</option>
+</select>
   </div>
   <button type="button" class="removePouchSize">Remove</button>
 `;
@@ -720,7 +731,7 @@ $('submitterEmail').value = '';
   $('location').value = '';
   $('product').value = '';
   $('productType').value = '';
-  $('pouchType').value = '';
+  
   const pouchSizeList = $('pouchSizeList');
 pouchSizeList.innerHTML = `
   <div class="pouch-size-row">
@@ -729,7 +740,15 @@ pouchSizeList.innerHTML = `
       <span>×</span>
       <input type="number" class="pouchLength" placeholder="Length">
       <input type="text" class="pouchFillWeight" placeholder="Filling weight">
-   
+   <select class="pouchTypeRow">
+  <option value="">Select pouch type</option>
+  <option>Zipper Stand-up</option>
+  <option>Stand-up</option>
+  <option>Flat pouch</option>
+  <option>Spout</option>
+  <option>Pillow</option>
+  <option>Other</option>
+</select>
   </div>
 `;
  
@@ -904,6 +923,7 @@ function viewDbRequest(id) {
           ×
           ${esc(p.length || '')} mm
           ${p.fillWeight ? ` / Filling weight: ${esc(p.fillWeight)}` : ''}
+          ${p.pouchType ? ` / Pouch type: ${esc(p.pouchType)}` : ''}
         </div>
       `).join('')
     : '-';
@@ -1107,7 +1127,7 @@ $('submitterEmail').value = r.submitterEmail || '';
   $('location').value = r.location || '';
   $('product').value = r.product || '';
   $('productType').value = r.productType || '';
- $('pouchType').value = r.pouchType || '';
+
  const pouchSizeList = $('pouchSizeList');
 pouchSizeList.innerHTML = '';
 
@@ -1140,7 +1160,17 @@ editPouchSizes.forEach((size, index) => {
       class="pouchFillWeight"
       placeholder="Filling weight"
       value="${size.fillWeight || ''}"
-    >
+      >
+      <select class="pouchTypeRow">
+  <option value="">Select pouch type</option>
+  <option ${size.pouchType === 'Zipper Stand-up' ? 'selected' : ''}>Zipper Stand-up</option>
+  <option ${size.pouchType === 'Stand-up' ? 'selected' : ''}>Stand-up</option>
+  <option ${size.pouchType === 'Flat pouch' ? 'selected' : ''}>Flat pouch</option>
+  <option ${size.pouchType === 'Spout' ? 'selected' : ''}>Spout</option>
+  <option ${size.pouchType === 'Pillow' ? 'selected' : ''}>Pillow</option>
+  <option ${size.pouchType === 'Other' ? 'selected' : ''}>Other</option>
+</select>
+    
   </div>
   ${index > 0
     ? '<button type="button" class="removePouchSize">Remove</button>'
