@@ -66,6 +66,8 @@ fillWeight: fillWeight
 function getAgentData(){return {
   source:'Agent PWA',
   agentId:CURRENT_AGENT?.id||'',
+ submittedBy:$('submittedBy').value.trim(),
+submitterEmail:$('submitterEmail').value.trim(),
   country:$('country').value.trim(),
   company:$('company').value.trim(),
   location:$('location').value.trim(),
@@ -92,6 +94,8 @@ async function submitData(d){
  const requiredFields = [
   ['country', 'Country'],
   ['company', 'Customer company'],
+  ['submittedBy', 'Submitted by'],
+['submitterEmail', 'Submitter email'],
   ['product', 'Product'],
   ['productType', 'Product type'],
   ['pouchType', 'Pouch type'],
@@ -706,6 +710,8 @@ dashboardTab.style.display = 'none';
 function resetRequestForm() {
   EDITING_REQUEST_ID = null;
 $('cancelEdit').style.display = 'none';
+ $('submittedBy').value = '';
+$('submitterEmail').value = '';
   $('country').value = '';
   $('company').value = '';
   $('location').value = '';
@@ -941,6 +947,15 @@ function viewDbRequest(id) {
           <th>Agent ID</th>
           <td>${esc(r.agentId || '')}</td>
         </tr>
+        <tr>
+  <th>Submitted by</th>
+  <td>${esc(r.submittedBy || '')}</td>
+</tr>
+
+<tr>
+  <th>Submitter email</th>
+  <td>${esc(r.submitterEmail || '')}</td>
+</tr>
 
         <tr>
           <th>Status</th>
@@ -1082,6 +1097,8 @@ function editDbRequest(id) {
 
   EDITING_REQUEST_ID = id;
 $('cancelEdit').style.display = 'inline-block';
+ $('submittedBy').value = r.submittedBy || '';
+$('submitterEmail').value = r.submitterEmail || '';
   $('country').value = r.country || '';
   $('company').value = r.customer || '';
   $('location').value = r.location || '';
