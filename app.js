@@ -235,7 +235,7 @@ frequency:d.frequency,
   switchTab('review');
  EDITING_REQUEST_ID = null;
  resetRequestForm();
-}$('addPouchSizeBtn').onclick = () => {function getPouchSizes
+}$('addPouchSizeBtn').onclick = () => {
   const row = document.createElement('div');
   row.className = 'pouch-size-row';
 
