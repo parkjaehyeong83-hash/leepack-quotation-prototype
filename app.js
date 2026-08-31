@@ -24,8 +24,15 @@ function requiredStations(d){
   return n;
 }
 function analyze(d){
-  const req=requiredStations(d); const isZip=d.pouchType.includes('Zipper');
-  let sizeMatches=RT_MODELS.filter(m=>d.width>=m.wMin&&d.width<=m.wMax&&d.length>=m.lMin&&d.length<=m.lMax);
+  const req=requiredStations(d); const isZip=(d.pouchSizes || []).some(p => (p.pouchType || '').includes('Zipper'));
+ let sizeMatches=RT_MODELS.filter(m=>
+  (d.pouchSizes || []).every(p =>
+    Number(p.width) >= m.wMin &&
+    Number(p.width) <= m.wMax &&
+    Number(p.length) >= m.lMin &&
+    Number(p.length) <= m.lMax
+  )
+);
   let excluded=[];
   if(isZip){
     sizeMatches.forEach(m=>{if(!m.zipper)excluded.push({model:m.model,reason:'Zipper Stand-up pouch not applicable to RT-00 series'});});
