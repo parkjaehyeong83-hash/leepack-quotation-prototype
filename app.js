@@ -458,7 +458,7 @@ function normalizeProductName(value){
 
       </div>
       <div class="dashboard-charts-grid">
-            <div class="dashboard-chart-card">
+           <div class="dashboard-chart-card" style="order:3;">
         <h3>Requests by Country</h3>
 
         <div class="dashboard-bars">
@@ -482,7 +482,7 @@ function normalizeProductName(value){
           }
         </div>
       </div>
-          <div class="dashboard-chart-card">
+          <div class="dashboard-chart-card" style="order:4;">
         <h3>Requests by Product</h3>
 
         <div class="dashboard-bars">
@@ -506,9 +506,8 @@ function normalizeProductName(value){
           }
         </div>
       </div>
-      </div>
-      <div class="dashboard-charts-grid">
-      <div class="dashboard-chart-card dashboard-product-type-card">
+     
+      <div class="dashboard-chart-card dashboard-product-type-card" style="order:2;">
   <h3>Requests by Product Type</h3>
   <div class="dashboard-donut-wrap">
   <div class="dashboard-donut">
@@ -571,7 +570,7 @@ function normalizeProductName(value){
 </div>
   </div>
 </div>
-            <div class="dashboard-chart-card dashboard-monthly-card">            
+            <div class="dashboard-chart-card dashboard-monthly-card" style="order:1;">      
         <h3>Monthly Trend</h3>        
         <div class="dashboard-line-chart">
   <svg viewBox="0 0 600 220" class="dashboard-line-svg">
@@ -619,6 +618,7 @@ ${
   `).join('')
 }
 </svg>
+</div>
 </div>
       </div>
     `;
