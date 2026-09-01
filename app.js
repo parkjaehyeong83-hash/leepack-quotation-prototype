@@ -873,7 +873,7 @@ const adminFilterHtml =
             <th>Country</th>
             <th>Customer</th>
             <th>Product</th>
-            <th>Model</th>
+         
             <th>Attachment</th>
             <th>Status</th>
       ${CURRENT_AGENT.role === 'admin' ? '' : '<th>View / Edit</th>'}
@@ -888,7 +888,7 @@ const adminFilterHtml =
 <td>${esc(r.country || '')}</td>
               <td>${esc(r.customer || '')}</td>
               <td>${esc(r.product || '')}</td>
-                <td>${esc(r.model || '-')}</td>
+                
               <td>
   ${
     r.attachments
