@@ -552,69 +552,102 @@ let statusOffset = 0;
         </div>
       </div>
      
-      <div class="dashboard-chart-card dashboard-product-type-card" style="order:2;">
+     <div class="dashboard-chart-card dashboard-product-type-card" style="order:2;">
   <h3>Requests by Product Type</h3>
-  <div class="dashboard-donut-wrap">
-  <div class="dashboard-donut">
-  <svg viewBox="0 0 120 120" class="dashboard-donut-svg">
-  <circle
-    cx="60"
-    cy="60"
-    r="45"
-    fill="none"
-    stroke="#edf2f6"
-    stroke-width="18"
-  ></circle>
- ${
-  productTypeData.map(([type, count], index) => {
-    const circumference = 2 * Math.PI * 45;
-    const percent = totalProductTypeCount
-      ? count / totalProductTypeCount
-      : 0;
 
-    const dash = percent * circumference;
-    const gap = circumference - dash;
-    const offset = -productTypeOffset * circumference;
+  <div
+    class="dashboard-donut-wrap"
+    style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;"
+  >
+    <div
+      class="dashboard-donut"
+      style="position:relative; width:140px; height:140px; flex:none;"
+    >
+      <svg viewBox="0 0 120 120" class="dashboard-donut-svg">
+        <circle
+          cx="60"
+          cy="60"
+          r="45"
+          fill="none"
+          stroke="#edf2f6"
+          stroke-width="18"
+        ></circle>
 
-    productTypeOffset += percent;
+        ${
+          productTypeData.map(([type, count], index) => {
+            const circumference = 2 * Math.PI * 45;
+            const percent = totalProductTypeCount
+              ? count / totalProductTypeCount
+              : 0;
 
-    return `
-      <circle
-        cx="60"
-        cy="60"
-        r="45"
-        fill="none"
-        stroke="hsl(${index * 65}, 65%, 50%)"
-        stroke-width="18"
-        stroke-dasharray="${dash} ${gap}"
-        stroke-dashoffset="${offset}"
-        transform="rotate(-90 60 60)"
-      ></circle>
-    `;
-  }).join('')
-}
-</svg>
-<div class="dashboard-donut-center">
-  <strong>${totalProductTypeCount}</strong>
-  <span>Total</span>
-</div>
-  </div>
-  <div class="dashboard-donut-legend">
-  ${
-  productTypeData.map(([type, count], index) => `
-    <div class="dashboard-donut-legend-item">
-      <span
-        class="dashboard-donut-dot"
-        style="background:hsl(${index * 65}, 65%, 50%)"
-      ></span>
-      <span>${esc(type)}</span>
-      <strong>${count}</strong>
+            const dash = percent * circumference;
+            const gap = circumference - dash;
+            const offset = -productTypeOffset * circumference;
+
+            productTypeOffset += percent;
+
+            return `
+              <circle
+                cx="60"
+                cy="60"
+                r="45"
+                fill="none"
+                stroke="hsl(${index * 65}, 65%, 50%)"
+                stroke-width="18"
+                stroke-dasharray="${dash} ${gap}"
+                stroke-dashoffset="${offset}"
+                transform="rotate(-90 60 60)"
+              ></circle>
+            `;
+          }).join('')
+        }
+      </svg>
+
+      <div
+        class="dashboard-donut-center"
+        style="
+          position:absolute;
+          inset:0;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+        "
+      >
+        <strong>${totalProductTypeCount}</strong>
+        <span>Total</span>
+      </div>
     </div>
-  `).join('')
-}
-</div>
+
+    <div
+      class="dashboard-donut-legend"
+      style="
+        display:flex;
+        flex-direction:row;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:8px 18px;
+        min-width:0;
+      "
+    >
+      ${
+        productTypeData.map(([type, count], index) => `
+          <div
+            class="dashboard-donut-legend-item"
+            style="display:flex; align-items:center; gap:6px;"
+          >
+            <span
+              class="dashboard-donut-dot"
+              style="background:hsl(${index * 65}, 65%, 50%)"
+            ></span>
+            <span>${esc(type)}</span>
+            <strong>${count}</strong>
+          </div>
+        `).join('')
+      }
+    </div>
   </div>
-  </div>
+</div> 
   <div class="dashboard-chart-card dashboard-status-card" style="order:3;">
   <h3>Requests by Status</h3>
 
