@@ -468,14 +468,17 @@ let statusOffset = 0;
   ? Math.max(...monthlyData.map(([, count]) => count))
   : 1;
    const chartWidth = 520;
-   const chartHeight = 140;
-   const monthlyPoints = [];
-   monthlyData.forEach(([month, count], index) => {
-    const x = 50 + (monthlyData.length === 1 ? chartWidth / 2 : (index / (monthlyData.length - 1)) * chartWidth);
-    const y = 180 - (count / maxMonthlyCount) * chartHeight;
-    monthlyPoints.push({ month, count, x, y });
+const chartHeight = 140;
+const chartMax = 10;
+
+const monthlyPoints = [];
+monthlyData.forEach(([month, count], index) => {
+  const x = 50 + (monthlyData.length === 1 ? chartWidth / 2 : (index / (monthlyData.length - 1)) * chartWidth);
+  const y = 180 - (count / chartMax) * chartHeight;
+  monthlyPoints.push({ month, count, x, y });
 });
-   const monthlyPolyline = monthlyPoints.map(p => `${p.x},${p.y}`).join(' ');
+
+const monthlyPolyline = monthlyPoints.map(p => `${p.x},${p.y}`).join(' ');
     box.innerHTML = `
       <div class="dashboard-summary">
 
@@ -721,38 +724,64 @@ let statusOffset = 0;
         <div class="dashboard-line-chart">
   <svg viewBox="0 0 600 220" class="dashboard-line-svg">
   <line x1="50" y1="40" x2="570" y2="40" class="dashboard-grid-line"></line>
-<line x1="50" y1="110" x2="570" y2="110" class="dashboard-grid-line"></line>
+<line x1="50" y1="68" x2="570" y2="68" class="dashboard-grid-line"></line>
+<line x1="50" y1="96" x2="570" y2="96" class="dashboard-grid-line"></line>
+<line x1="50" y1="124" x2="570" y2="124" class="dashboard-grid-line"></line>
+<line x1="50" y1="152" x2="570" y2="152" class="dashboard-grid-line"></line>
 <line x1="50" y1="180" x2="570" y2="180" class="dashboard-grid-line"></line>
+
+<line
+  x1="50"
+  y1="40"
+  x2="50"
+  y2="180"
+  stroke="#0b7fb8"
+  stroke-width="1.5"
+></line>
+
+<text x="38" y="184" text-anchor="end" font-size="11" fill="#0b7fb8">0</text>
+<text x="38" y="156" text-anchor="end" font-size="11" fill="#0b7fb8">2</text>
+<text x="38" y="128" text-anchor="end" font-size="11" fill="#0b7fb8">4</text>
+<text x="38" y="100" text-anchor="end" font-size="11" fill="#0b7fb8">6</text>
+<text x="38" y="72" text-anchor="end" font-size="11" fill="#0b7fb8">8</text>
+<text x="38" y="44" text-anchor="end" font-size="11" fill="#0b7fb8">10</text>
+
 ${
   monthlyPoints.length > 1
     ? `<polyline
         points="${monthlyPolyline}"
-        class="dashboard-trend-line"
         fill="none"
+        stroke="#0b7fb8"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       ></polyline>`
     : ''
 }
+
 ${
   monthlyPoints.map(p => `
     <circle
       cx="${p.x}"
       cy="${p.y}"
       r="5"
-      class="dashboard-trend-point"
+      fill="#0b7fb8"
     ></circle>
   `).join('')
 }
-  
-  ${
+
+${
   monthlyPoints.map(p => `
     <text
       x="${p.x}"
       y="${p.y - 12}"
       class="dashboard-trend-value"
       text-anchor="middle"
+      fill="#0b7fb8"
     >${p.count}</text>
   `).join('')
 }
+
 ${
   monthlyPoints.map(p => `
     <text
