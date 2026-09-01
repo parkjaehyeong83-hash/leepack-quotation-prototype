@@ -786,6 +786,33 @@ window.setAdminFilter = function(agentId) {
   ADMIN_FILTER = agentId;
   renderMyRequests();
 };
+async function updateRequestStatus(requestId, newStatus) {
+  if (!CURRENT_AGENT || !requestId || !newStatus) return;
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        action: 'STATUS_UPDATE',
+        requestId: requestId,
+        agentId: CURRENT_AGENT.id,
+        status: newStatus
+      })
+    });
+
+    // 저장 후 목록 다시 불러오기
+    await renderMyRequests();
+
+  } catch (err) {
+    console.error('Status update failed:', err);
+    alert('Failed to update status.');
+    await renderMyRequests();
+  }
+}
 async function renderMyRequests() {
   const box = $('myRequestsList');
 
@@ -879,6 +906,7 @@ const adminFilterHtml =
               <td>
   <select class="status-select"
           data-request-id="${esc(r.requestId || '')}"
+          onchange="updateRequestStatus('${esc(r.requestId || '')}', this.value)"
           ${CURRENT_AGENT.role === 'admin' ? 'disabled' : ''}>
     ${
       !r.status || r.status === 'New Request'
