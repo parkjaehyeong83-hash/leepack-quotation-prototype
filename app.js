@@ -503,7 +503,7 @@ let statusOffset = 0;
 
       </div>
       <div class="dashboard-charts-grid">
-           <div class="dashboard-chart-card" style="order:4;">
+           <div class="dashboard-chart-card" style="order:4; grid-column:span 6;">
         <h3>Requests by Country</h3>
 
         <div class="dashboard-bars">
@@ -527,7 +527,7 @@ let statusOffset = 0;
           }
         </div>
       </div>
-          <div class="dashboard-chart-card" style="order:5;">
+          <div class="dashboard-chart-card" style="order:5; grid-column:span 6;">
         <h3>Requests by Product</h3>
 
         <div class="dashboard-bars">
@@ -614,7 +614,7 @@ let statusOffset = 0;
 }
 </div>
   </div>
-  <div class="dashboard-chart-card" style="order:3;">
+  <div class="dashboard-chart-card dashboard-status-card" style="order:3;">
   <h3>Requests by Status</h3>
 
   <div class="dashboard-donut-wrap">
