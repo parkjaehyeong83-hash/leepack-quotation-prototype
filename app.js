@@ -433,6 +433,26 @@ function normalizeProductName(value){
   .sort((a, b) => b[1] - a[1]);
    const totalProductTypeCount = productTypeData.reduce((sum, [, count]) => sum + count, 0);
    let productTypeOffset = 0;
+   const statusCounts = {
+  'New Request': 0,
+  'In Progress': 0,
+  'Order Won': 0,
+  'Lost to Competitor': 0,
+  'Project Cancelled': 0,
+  'On Hold': 0
+};
+
+data.forEach(r => {
+  const status = String(r.status || 'New Request').trim();
+
+  if (statusCounts[status] !== undefined) {
+    statusCounts[status]++;
+  }
+});
+
+const statusData = Object.entries(statusCounts);
+const totalStatusCount = statusData.reduce((sum, [, count]) => sum + count, 0);
+let statusOffset = 0;
    const monthlyCounts = {};
    data.forEach(r => {
   const d = new Date(r.receivedDate);
@@ -483,7 +503,7 @@ function normalizeProductName(value){
 
       </div>
       <div class="dashboard-charts-grid">
-           <div class="dashboard-chart-card" style="order:3;">
+           <div class="dashboard-chart-card" style="order:4;">
         <h3>Requests by Country</h3>
 
         <div class="dashboard-bars">
@@ -507,7 +527,7 @@ function normalizeProductName(value){
           }
         </div>
       </div>
-          <div class="dashboard-chart-card" style="order:4;">
+          <div class="dashboard-chart-card" style="order:5;">
         <h3>Requests by Product</h3>
 
         <div class="dashboard-bars">
@@ -594,6 +614,73 @@ function normalizeProductName(value){
 }
 </div>
   </div>
+  <div class="dashboard-chart-card" style="order:3;">
+  <h3>Requests by Status</h3>
+
+  <div class="dashboard-donut-wrap">
+    <div class="dashboard-donut">
+      <svg viewBox="0 0 120 120" class="dashboard-donut-svg">
+        <circle
+          cx="60"
+          cy="60"
+          r="45"
+          fill="none"
+          stroke="#edf2f6"
+          stroke-width="18"
+        ></circle>
+
+        ${
+          statusData.map(([status, count], index) => {
+            const circumference = 2 * Math.PI * 45;
+            const percent = totalStatusCount
+              ? count / totalStatusCount
+              : 0;
+
+            const dash = percent * circumference;
+            const gap = circumference - dash;
+            const offset = -statusOffset * circumference;
+
+            statusOffset += percent;
+
+            return `
+              <circle
+                cx="60"
+                cy="60"
+                r="45"
+                fill="none"
+                stroke="hsl(${index * 55}, 65%, 50%)"
+                stroke-width="18"
+                stroke-dasharray="${dash} ${gap}"
+                stroke-dashoffset="${offset}"
+                transform="rotate(-90 60 60)"
+              ></circle>
+            `;
+          }).join('')
+        }
+      </svg>
+
+      <div class="dashboard-donut-center">
+        <strong>${totalStatusCount}</strong>
+        <span>Total</span>
+      </div>
+    </div>
+
+    <div class="dashboard-donut-legend">
+      ${
+        statusData.map(([status, count], index) => `
+          <div class="dashboard-donut-legend-item">
+            <span
+              class="dashboard-donut-dot"
+              style="background:hsl(${index * 55}, 65%, 50%)"
+            ></span>
+            <span>${esc(status)}</span>
+            <strong>${count}</strong>
+          </div>
+        `).join('')
+      }
+    </div>
+  </div>
+</div>
 </div>
             <div class="dashboard-chart-card dashboard-monthly-card" style="order:1;">      
         <h3>Monthly Trend</h3>        
