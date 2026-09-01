@@ -786,7 +786,7 @@ window.setAdminFilter = function(agentId) {
   ADMIN_FILTER = agentId;
   renderMyRequests();
 };
-async function updateRequestStatus(requestId, newStatus) {
+window.updateRequestStatus = async function(requestId, newStatus) {
   if (!CURRENT_AGENT || !requestId || !newStatus) return;
 
   try {
@@ -812,7 +812,7 @@ async function updateRequestStatus(requestId, newStatus) {
     alert('Failed to update status.');
     await renderMyRequests();
   }
-}
+};
 async function renderMyRequests() {
   const box = $('myRequestsList');
 
