@@ -673,6 +673,77 @@
     font-size:12px;
   }
 }
+  /* ===== DASHBOARD DONUT FINAL FIX ===== */
+
+/* Product Type */
+.dashboard-product-type-card .dashboard-donut-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  min-height:220px;
+}
+
+.dashboard-product-type-card .dashboard-donut{
+  position:relative;
+  width:140px;
+  height:140px;
+  flex:0 0 140px;
+}
+
+.dashboard-product-type-card .dashboard-donut-legend{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px 18px;
+  min-width:0;
+}
+
+.dashboard-product-type-card .dashboard-donut-legend-item{
+  display:grid;
+  grid-template-columns:10px auto auto;
+  align-items:center;
+  gap:6px;
+}
+
+
+/* Status */
+.dashboard-status-card .dashboard-donut-wrap{
+  display:grid;
+  grid-template-columns:140px minmax(0,1fr);
+  align-items:center;
+  gap:16px;
+  min-height:220px;
+}
+
+.dashboard-status-card .dashboard-donut{
+  position:relative;
+  width:140px;
+  height:140px;
+  flex:0 0 140px;
+}
+
+.dashboard-status-card .dashboard-donut-legend{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  min-width:0;
+}
+
+.dashboard-status-card .dashboard-donut-legend-item{
+  display:grid;
+  grid-template-columns:10px minmax(0,1fr) auto;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+}
+
+.dashboard-status-card .dashboard-donut-legend-item span:nth-child(2){
+  line-height:1.15;
+  overflow-wrap:break-word;
+}
   </style>
 </head>
 
