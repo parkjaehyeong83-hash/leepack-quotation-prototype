@@ -614,6 +614,7 @@ let statusOffset = 0;
 }
 </div>
   </div>
+  </div>
   <div class="dashboard-chart-card dashboard-status-card" style="order:3;">
   <h3>Requests by Status</h3>
 
@@ -680,7 +681,7 @@ let statusOffset = 0;
       }
     </div>
   </div>
-</div>
+
 </div>
             <div class="dashboard-chart-card dashboard-monthly-card" style="order:1;">      
         <h3>Monthly Trend</h3>        
