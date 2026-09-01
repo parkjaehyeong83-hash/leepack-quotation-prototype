@@ -552,7 +552,7 @@ let statusOffset = 0;
         </div>
       </div>
      
-     <div class="dashboard-chart-card dashboard-product-type-card" style="order:2;">
+     <div class="dashboard-chart-card dashboard-product-type-card" style="order:3;">
   <h3>Requests by Product Type</h3>
 
   <div
@@ -648,7 +648,7 @@ let statusOffset = 0;
     </div>
   </div>
 </div> 
-  <div class="dashboard-chart-card dashboard-status-card" style="order:3;">
+  <div class="dashboard-chart-card dashboard-status-card" style="order:2;">
   <h3>Requests by Status</h3>
 
   <div class="dashboard-donut-wrap">
