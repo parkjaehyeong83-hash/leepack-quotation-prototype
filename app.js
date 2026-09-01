@@ -903,22 +903,27 @@ const adminFilterHtml =
   }
 </td>
             
-              <td>
-  <select class="status-select"
-          data-request-id="${esc(r.requestId || '')}"
-          onchange="updateRequestStatus('${esc(r.requestId || '')}', this.value)"
-          ${CURRENT_AGENT.role === 'admin' ? 'disabled' : ''}>
-    ${
-      !r.status || r.status === 'New Request'
-        ? '<option value="New Request" selected disabled>New Request</option>'
-        : ''
-    }
-    <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-    <option value="Order Won" ${r.status === 'Order Won' ? 'selected' : ''}>Order Won</option>
-    <option value="Lost to Competitor" ${r.status === 'Lost to Competitor' ? 'selected' : ''}>Lost to Competitor</option>
-    <option value="Project Cancelled" ${r.status === 'Project Cancelled' ? 'selected' : ''}>Project Cancelled</option>
-    <option value="On Hold" ${r.status === 'On Hold' ? 'selected' : ''}>On Hold</option>
-  </select>
+             <td>
+  ${
+    CURRENT_AGENT.role === 'admin'
+      ? esc(r.status || 'New Request')
+      : `
+        <select class="status-select"
+                data-request-id="${esc(r.requestId || '')}"
+                onchange="updateRequestStatus('${esc(r.requestId || '')}', this.value)">
+          ${
+            !r.status || r.status === 'New Request'
+              ? '<option value="New Request" selected disabled>New Request</option>'
+              : ''
+          }
+          <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+          <option value="Order Won" ${r.status === 'Order Won' ? 'selected' : ''}>Order Won</option>
+          <option value="Lost to Competitor" ${r.status === 'Lost to Competitor' ? 'selected' : ''}>Lost to Competitor</option>
+          <option value="Project Cancelled" ${r.status === 'Project Cancelled' ? 'selected' : ''}>Project Cancelled</option>
+          <option value="On Hold" ${r.status === 'On Hold' ? 'selected' : ''}>On Hold</option>
+        </select>
+      `
+  }
 </td>
            ${CURRENT_AGENT.role === 'admin' ? '' : `
   <td>
