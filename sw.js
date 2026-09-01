@@ -1,4 +1,4 @@
-const CACHE = 'leepack-rt-prototype-v29';
+const CACHE = 'leepack-rt-prototype-v30';
 
 const FILES = [
   './',
