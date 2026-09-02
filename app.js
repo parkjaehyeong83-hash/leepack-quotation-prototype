@@ -13,6 +13,7 @@ let CURRENT_AGENT = null;
 let EDITING_REQUEST_ID = null;
 let DB_REQUESTS = [];
 let ADMIN_FILTER = 'ALL';
+let STATUS_FILTER = 'ALL';
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
 
@@ -443,6 +444,13 @@ function normalizeProductName(value){
 };
 
 data.forEach(r => {
+  if (
+    STATUS_FILTER !== 'ALL' &&
+    String(r.agentId || '') !== STATUS_FILTER
+  ) {
+    return;
+  }
+
   const status = String(r.status || 'In Progress').trim();
 
   if (statusCounts[status] !== undefined) {
@@ -652,7 +660,15 @@ const monthlyPolyline = monthlyPoints.map(p => `${p.x},${p.y}`).join(' ');
   </div>
 </div> 
   <div class="dashboard-chart-card dashboard-status-card" style="order:2;">
+ <div class="dashboard-status-header">
   <h3>Requests by Status</h3>
+  <select id="statusAgentFilter" onchange="setStatusFilter(this.value)">
+  <option value="ALL" ${STATUS_FILTER === 'ALL' ? 'selected' : ''}>All Agents</option>
+  <option value="INDIA01" ${STATUS_FILTER === 'INDIA01' ? 'selected' : ''}>India Dealer</option>
+  <option value="PERU01" ${STATUS_FILTER === 'PERU01' ? 'selected' : ''}>Peru Dealer</option>
+  <option value="TAIWAN01" ${STATUS_FILTER === 'TAIWAN01' ? 'selected' : ''}>Taiwan Dealer</option>
+</select>
+</div>
 
   <div class="dashboard-donut-wrap">
     <div class="dashboard-donut">
@@ -935,6 +951,10 @@ function dealerLogout() {
 window.setAdminFilter = function(agentId) {
   ADMIN_FILTER = agentId;
   renderMyRequests();
+};
+window.setStatusFilter = function(agentId) {
+  STATUS_FILTER = agentId;
+  renderDashboard();
 };
 window.updateRequestStatus = async function(requestId, newStatus) {
   if (!CURRENT_AGENT || !requestId || !newStatus) return;
