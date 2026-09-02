@@ -1098,7 +1098,7 @@ const adminFilterHtml =
       `
   }
 </td>
-          <td>
+         <td style="white-space:nowrap;">
   <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>
   ${
     CURRENT_AGENT.role === 'admin'
