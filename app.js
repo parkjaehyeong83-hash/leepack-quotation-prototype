@@ -13,7 +13,7 @@ let CURRENT_AGENT = null;
 let EDITING_REQUEST_ID = null;
 let DB_REQUESTS = [];
 let ADMIN_FILTER = 'ALL';
-let ADMIN_STATUS_FILTER = 'ALL';
+
 let STATUS_FILTER = 'ALL';
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
@@ -953,10 +953,7 @@ window.setAdminFilter = function(agentId) {
   ADMIN_FILTER = agentId;
   renderMyRequests();
 };
-window.setAdminStatusFilter = function(status) {
-  ADMIN_STATUS_FILTER = status;
-  renderMyRequests();
-};
+
 window.setStatusFilter = function(agentId) {
   STATUS_FILTER = agentId;
   renderDashboard();
@@ -1035,14 +1032,7 @@ const adminFilterHtml =
         <button type="button" onclick="setAdminFilter('PERU01')">Peru</button>
         <button type="button" onclick="setAdminFilter('TAIWAN01')">Taiwan</button>
       </div>
-      <div style="margin-bottom:12px;">
-  <button type="button" onclick="setAdminStatusFilter('ALL')">All Status</button>
-  <button type="button" onclick="setAdminStatusFilter('In Progress')">In Progress</button>
-  <button type="button" onclick="setAdminStatusFilter('Order Won')">Order Won</button>
-  <button type="button" onclick="setAdminStatusFilter('Lost to Competitor')">Lost to Competitor</button>
-  <button type="button" onclick="setAdminStatusFilter('Project Cancelled')">Project Cancelled</button>
-  <button type="button" onclick="setAdminStatusFilter('On Hold')">On Hold</button>
-</div>
+      
     `
     : '';
     box.innerHTML = `
