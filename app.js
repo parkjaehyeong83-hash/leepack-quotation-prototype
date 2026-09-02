@@ -434,7 +434,7 @@ function normalizeProductName(value){
    const totalProductTypeCount = productTypeData.reduce((sum, [, count]) => sum + count, 0);
    let productTypeOffset = 0;
    const statusCounts = {
-  'New Request': 0,
+  
   'In Progress': 0,
   'Order Won': 0,
   'Lost to Competitor': 0,
@@ -443,7 +443,7 @@ function normalizeProductName(value){
 };
 
 data.forEach(r => {
-  const status = String(r.status || 'New Request').trim();
+  const status = String(r.status || 'In Progress').trim();
 
   if (statusCounts[status] !== undefined) {
     statusCounts[status]++;
@@ -1056,14 +1056,14 @@ const adminFilterHtml =
              <td>
   ${
     CURRENT_AGENT.role === 'admin'
-      ? esc(r.status || 'New Request')
+      ? esc(r.status || 'In Progress')
       : `
         <select class="status-select"
                 data-request-id="${esc(r.requestId || '')}"
                 onchange="updateRequestStatus('${esc(r.requestId || '')}', this.value)">
           ${
             !r.status || r.status === 'New Request'
-              ? '<option value="New Request" selected disabled>New Request</option>'
+            ? '<option value="In Progress" selected disabled>In Progress</option>'
               : ''
           }
           <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
