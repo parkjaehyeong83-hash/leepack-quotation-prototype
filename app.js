@@ -1049,7 +1049,7 @@ const adminFilterHtml =
          
             <th>Attachment</th>
             <th>Status</th>
-      ${CURRENT_AGENT.role === 'admin' ? '' : '<th>View / Edit</th>'}
+     <th>${CURRENT_AGENT.role === 'admin' ? 'View' : 'View / Edit'}</th>
           </tr>
         </thead>
         <tbody>
@@ -1098,13 +1098,14 @@ const adminFilterHtml =
       `
   }
 </td>
-           ${CURRENT_AGENT.role === 'admin' ? '' : `
-  <td>
-    <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>
-    <button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button>
-  </td>
-`}
-            </tr>
+          <td>
+  <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>
+  ${
+    CURRENT_AGENT.role === 'admin'
+      ? ''
+      : `<button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button>`
+  }
+</td>
           `).join('')}
         </tbody>
       </table>
