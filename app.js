@@ -662,7 +662,7 @@ const monthlyPolyline = monthlyPoints.map(p => `${p.x},${p.y}`).join(' ');
 </div> 
   <div class="dashboard-chart-card dashboard-status-card" style="order:2;">
  <div class="dashboard-status-header" style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
-  <h3>Requests by Status</h3>
+  <h3 style="white-space:nowrap;">Requests by Status</h3>
   <select id="statusAgentFilter" onchange="setStatusFilter(this.value)">
   <option value="ALL" ${STATUS_FILTER === 'ALL' ? 'selected' : ''}>All Agents</option>
   <option value="INDIA01" ${STATUS_FILTER === 'INDIA01' ? 'selected' : ''}>India Dealer</option>
