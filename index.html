@@ -437,13 +437,7 @@
     /* ADMIN DASHBOARD SUMMARY */
 /* ADMIN DASHBOARD SUMMARY */
 
-#dashboard{
-  background:
-    linear-gradient(rgba(10,30,55,0.55), rgba(10,30,55,0.55)),
-    url("전경6.JPG") center/cover no-repeat;
-  border-radius:20px;
-  padding:24px;
-}
+
 
 .dashboard-summary{
   display:grid;
@@ -451,47 +445,35 @@
   gap:16px;
   margin-top:20px;
 }
-.dashboard-summary{
-  display:grid;
-  grid-template-columns:repeat(4, 1fr);
-  gap:16px;
-  margin-top:20px;
-}
+
 
 .dashboard-card{
-  background:rgba(255,255,255,0.94);
-  border:1px solid rgba(255,255,255,0.55);
-  border-radius:16px;
-  padding:22px;
+  background:#fff;
+  border:1px solid #d9e2ea;
+  border-radius:12px;
+  padding:20px;
   min-height:110px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.10);
-  backdrop-filter:blur(8px);
-  transition:transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.dashboard-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 30px rgba(0,0,0,0.14);
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
 }
 
 .dashboard-label{
   font-size:12px;
-  font-weight:800;
+  font-weight:700;
   color:#687788;
   margin-bottom:10px;
-  letter-spacing:0.6px;
 }
 
 .dashboard-value{
-  font-size:32px;
-  font-weight:800;
+  font-size:30px;
+  font-weight:700;
   line-height:1.2;
-  color:#16335d;
 }
 
 .dashboard-text{
   font-size:22px;
 }
+
+
 
 @media(max-width:800px){
   .dashboard-summary{
