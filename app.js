@@ -1713,3 +1713,60 @@ if (customerCountrySelect) {
     customerCountrySelect.appendChild(option);
   });
 }
+
+async function submitCustomerInquiry() {
+  const data = {
+    source: 'CUSTOMER',
+
+    country: $('customerCountry').value.trim(),
+    company: $('customerCompany').value.trim(),
+    location: $('customerLocation').value.trim(),
+    contactPerson: $('customerContact').value.trim(),
+    email: $('customerEmail').value.trim(),
+    phone: $('customerPhone').value.trim(),
+
+    product: $('customerProduct').value.trim(),
+    pouch: $('customerPouch').value.trim(),
+    fillAmount: $('customerFillAmount').value.trim(),
+    speed: $('customerSpeed').value.trim(),
+    packagingMethod: $('customerPackagingMethod').value.trim(),
+    equipment: $('customerEquipment').value.trim(),
+
+    requirements: $('customerRequirements').value.trim()
+  };
+
+  // Required fields
+  if (
+    !data.country ||
+    !data.company ||
+    !data.contactPerson ||
+    !data.email ||
+    !data.product ||
+    !data.pouch ||
+    !data.fillAmount ||
+    !data.speed ||
+    !data.requirements
+  ) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(data)
+    });
+
+    alert('Your inquiry has been submitted.');
+
+  } catch (err) {
+    console.error(err);
+    alert('Failed to submit your inquiry. Please try again.');
+  }
+}
+
+$('customerSubmitBtn').onclick = submitCustomerInquiry;
