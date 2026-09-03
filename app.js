@@ -1762,11 +1762,32 @@ async function submitCustomerInquiry() {
     });
 
     alert('Your inquiry has been submitted.');
-
+resetCustomerInquiryForm();
   } catch (err) {
     console.error(err);
     alert('Failed to submit your inquiry. Please try again.');
   }
 }
+function resetCustomerInquiryForm() {
+  $('customerCountry').value = '';
+  $('customerCompany').value = '';
+  $('customerLocation').value = '';
+  $('customerContact').value = '';
+  $('customerEmail').value = '';
+  $('customerPhone').value = '';
 
+  $('customerProduct').value = '';
+  $('customerPouch').value = '';
+  $('customerFillAmount').value = '';
+  $('customerSpeed').value = '';
+  $('customerPackagingMethod').value = '';
+  $('customerEquipment').value = '';
+
+  $('customerRequirements').value = '';
+
+  if ($('customerFiles')) {
+    $('customerFiles').value = '';
+  }
+}
 $('customerSubmitBtn').onclick = submitCustomerInquiry;
+$('customerResetBtn').onclick = resetCustomerInquiryForm;
