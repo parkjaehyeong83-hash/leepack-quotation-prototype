@@ -287,11 +287,19 @@
 
     /* LOGIN */
     #loginScreen{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
   min-height:100vh;
+  box-sizing:border-box;
+
   display:flex;
   align-items:center;
   justify-content:flex-end;
+
   padding:60px 70px;
+
   background:
     linear-gradient(
       90deg,
@@ -300,16 +308,8 @@
       rgba(0,0,0,0.28) 100%
     ),
     url("Factory.JPG") center center / cover no-repeat;
-  position:relative;
-}
-.login-hero{
-  position:absolute;
-  left:70px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#fff;
-  z-index:2;
-  text-shadow:0 3px 12px rgba(0,0,0,0.35);
+
+  z-index:9999;
 }
 
 .login-hero-brand{
