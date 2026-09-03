@@ -1476,6 +1476,15 @@ function editRequest(id) {
 }
 $('loginBtn').onclick = dealerLogin;
 $('logoutBtn').onclick = dealerLogout;
+$('customerInquiryBtn').onclick = () => {
+  $('loginScreen').style.display = 'none';
+  $('customerInquiryScreen').style.display = 'block';
+};
+
+$('customerBackBtn').onclick = () => {
+  $('customerInquiryScreen').style.display = 'none';
+  $('loginScreen').style.display = 'flex';
+};
 $('cancelEdit').onclick = () => {
   EDITING_REQUEST_ID = null;
   resetRequestForm();
