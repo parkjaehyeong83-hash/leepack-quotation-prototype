@@ -1713,11 +1713,40 @@ if (customerCountrySelect) {
     customerCountrySelect.appendChild(option);
   });
 }
+function readCustomerFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      const base64 = result.split(',')[1] || '';
+
+      resolve({
+        name: file.name,
+        type: file.type || 'application/octet-stream',
+        base64: base64
+      });
+    };
+
+    reader.onerror = () => {
+      reject(new Error('Failed to read file: ' + file.name));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
 async function submitCustomerInquiry() {
+   const selectedFiles = Array.from($('customerFiles')?.files || []);
+
+  const attachments = [];
+  for (const file of selectedFiles) {
+    const encoded = await readCustomerFile(file);
+    attachments.push(encoded);
+  }
+
   const data = {
     source: 'CUSTOMER',
-
+    attachments: attachments,
     country: $('customerCountry').value.trim(),
     company: $('customerCompany').value.trim(),
     location: $('customerLocation').value.trim(),
