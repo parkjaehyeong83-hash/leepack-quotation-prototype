@@ -356,7 +356,50 @@
   margin-bottom:16px;
   background:#fff;
 }
+.customer-inquiry-entry{
+  margin-top:22px;
+  text-align:center;
+}
 
+.customer-inquiry-or{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:4px 0 16px;
+  font-size:12px;
+  font-weight:700;
+  color:#8a96a3;
+}
+
+.customer-inquiry-or::before,
+.customer-inquiry-or::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#d9e2ea;
+}
+
+.customer-inquiry-btn{
+  width:100%;
+  padding:13px 16px;
+  border:1.5px solid #0754cc;
+  border-radius:9px;
+  background:#fff;
+  color:#0754cc;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.customer-inquiry-btn:hover{
+  background:#f3f7ff;
+}
+
+.customer-inquiry-note{
+  margin-top:8px;
+  font-size:12px;
+  color:#8793a1;
+}
     .login-card button{
       width:100%;
       font-size:15px
@@ -841,7 +884,21 @@
       >
         LOGIN
       </button>
+<div class="customer-inquiry-entry">
+  <div class="customer-inquiry-or">OR</div>
 
+  <button
+    type="button"
+    id="customerInquiryBtn"
+    class="customer-inquiry-btn"
+  >
+    Submit an Inquiry as a Customer
+  </button>
+
+  <div class="customer-inquiry-note">
+    No dealer account required
+  </div>
+</div>
       <div id="loginMessage"></div>
 
     </div>
