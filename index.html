@@ -444,25 +444,34 @@
 }
 
 .dashboard-card{
-  background:#fff;
-  border:1px solid #d9e2ea;
-  border-radius:12px;
-  padding:20px;
+  background:rgba(255,255,255,0.94);
+  border:1px solid rgba(255,255,255,0.55);
+  border-radius:16px;
+  padding:22px;
   min-height:110px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  box-shadow:0 8px 24px rgba(0,0,0,0.10);
+  backdrop-filter:blur(8px);
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.14);
 }
 
 .dashboard-label{
   font-size:12px;
-  font-weight:700;
+  font-weight:800;
   color:#687788;
   margin-bottom:10px;
+  letter-spacing:0.6px;
 }
 
 .dashboard-value{
-  font-size:30px;
-  font-weight:700;
+  font-size:32px;
+  font-weight:800;
   line-height:1.2;
+  color:#16335d;
 }
 
 .dashboard-text{
