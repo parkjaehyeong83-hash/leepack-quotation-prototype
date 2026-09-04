@@ -1727,6 +1727,18 @@ if (customerCountrySelect) {
     customerCountrySelect.appendChild(option);
   });
 }
+const customerFilesInput = $('customerFiles');
+const customerFileList = $('customerFileList');
+
+if (customerFilesInput && customerFileList) {
+  customerFilesInput.addEventListener('change', () => {
+    const files = Array.from(customerFilesInput.files || []);
+
+    customerFileList.innerHTML = files.length
+      ? files.map(file => `✓ ${file.name}`).join('<br>')
+      : '';
+  });
+}
 function readCustomerFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
