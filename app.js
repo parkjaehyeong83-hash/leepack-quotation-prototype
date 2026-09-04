@@ -265,6 +265,7 @@ if (submitBtn && submitBtn.tagName === 'BUTTON') {
 }
   renderList();
   renderMyRequests();
+ switchTab('myRequests');
  EDITING_REQUEST_ID = null;
  resetRequestForm();
 }$('addPouchSizeBtn').onclick = () => {
