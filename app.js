@@ -13,7 +13,7 @@ let CURRENT_AGENT = null;
 let EDITING_REQUEST_ID = null;
 let DB_REQUESTS = [];
 let ADMIN_FILTER = 'ALL';
-
+let AGENT_SUBMITTING = false;
 let STATUS_FILTER = 'ALL';
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>`USD ${Number(n||0).toLocaleString()}`;
@@ -133,6 +133,8 @@ for (const [id, label] of requiredFields) {
     return;
   }
 }
+ if (AGENT_SUBMITTING) return;
+AGENT_SUBMITTING = true;
    // Read attachment files
   const attachmentInput = $('attachments');
   const attachmentFiles = attachmentInput
@@ -201,7 +203,13 @@ if (isEditing) {
   arr.unshift(r);
   saveRequests(arr);
 }
+const submitBtn = document.activeElement;
+const originalSubmitText = submitBtn?.textContent || '';
 
+if (submitBtn && submitBtn.tagName === 'BUTTON') {
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
+}
   try{
     await fetch(GOOGLE_SCRIPT_URL,{
       method:'POST',
@@ -235,10 +243,16 @@ frequency:d.frequency,
                            attachments: attachments
       })
     });
+   alert('Your request has been submitted successfully.');
   }catch(err){
     console.error('Google Sheet save failed:',err);
   }
+AGENT_SUBMITTING = false;
 
+if (submitBtn && submitBtn.tagName === 'BUTTON') {
+  submitBtn.disabled = false;
+  submitBtn.textContent = originalSubmitText;
+}
   renderList();
   openReview(r.id);
   switchTab('review');
