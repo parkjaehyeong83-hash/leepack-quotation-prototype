@@ -244,7 +244,16 @@ frequency:d.frequency,
       })
     });
    alert('Your request has been submitted successfully.');
-   renderMyRequests();
+
+AGENT_SUBMITTING = false;
+
+if (submitBtn && submitBtn.tagName === 'BUTTON') {
+  submitBtn.disabled = false;
+  submitBtn.textContent = originalSubmitText;
+}
+renderMyRequests();
+return;
+
   }catch(err){
     console.error('Google Sheet save failed:',err);
   }
