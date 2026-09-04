@@ -244,6 +244,7 @@ frequency:d.frequency,
       })
     });
    alert('Your request has been submitted successfully.');
+   renderMyRequests();
   }catch(err){
     console.error('Google Sheet save failed:',err);
   }
