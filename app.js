@@ -251,8 +251,7 @@ if (submitBtn && submitBtn.tagName === 'BUTTON') {
   submitBtn.disabled = false;
   submitBtn.textContent = originalSubmitText;
 }
-renderMyRequests();
-return;
+
 
   }catch(err){
     console.error('Google Sheet save failed:',err);
