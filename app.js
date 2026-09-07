@@ -1056,7 +1056,7 @@ const adminFilterHtml =
   CURRENT_AGENT.role === 'admin'
     ? `
       <div style="margin-bottom:12px;">
-  <select onchange="setAdminFilter(this.value)">
+ <select onchange="setAdminFilter(this.value)" style="width:200px;">
     <option value="ALL" ${ADMIN_FILTER === 'ALL' ? 'selected' : ''}>All</option>
     <option value="INDIA01" ${ADMIN_FILTER === 'INDIA01' ? 'selected' : ''}>India</option>
     <option value="PERU01" ${ADMIN_FILTER === 'PERU01' ? 'selected' : ''}>Peru</option>
