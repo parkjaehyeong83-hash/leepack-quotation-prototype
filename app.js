@@ -691,6 +691,7 @@ const monthlyPolyline = monthlyPoints.map(p => `${p.x},${p.y}`).join(' ');
   <option value="INDIA01" ${STATUS_FILTER === 'INDIA01' ? 'selected' : ''}>India Dealer</option>
   <option value="PERU01" ${STATUS_FILTER === 'PERU01' ? 'selected' : ''}>Peru Dealer</option>
   <option value="TAIWAN01" ${STATUS_FILTER === 'TAIWAN01' ? 'selected' : ''}>Taiwan Dealer</option>
+  <option value="TURKEY01" ${STATUS_FILTER === 'TURKEY01' ? 'selected' : ''}>Turkey Dealer</option>
 </select>
 </div>
 
@@ -1059,6 +1060,7 @@ const adminFilterHtml =
         <button type="button" onclick="setAdminFilter('INDIA01')">India</button>
         <button type="button" onclick="setAdminFilter('PERU01')">Peru</button>
         <button type="button" onclick="setAdminFilter('TAIWAN01')">Taiwan</button>
+        <button type="button" onclick="setAdminFilter('TURKEY01')">Turkey</button>
       </div>
       
     `
