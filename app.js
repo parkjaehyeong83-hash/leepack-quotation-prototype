@@ -1056,12 +1056,14 @@ const adminFilterHtml =
   CURRENT_AGENT.role === 'admin'
     ? `
       <div style="margin-bottom:12px;">
-        <button type="button" onclick="setAdminFilter('ALL')">All</button>
-        <button type="button" onclick="setAdminFilter('INDIA01')">India</button>
-        <button type="button" onclick="setAdminFilter('PERU01')">Peru</button>
-        <button type="button" onclick="setAdminFilter('TAIWAN01')">Taiwan</button>
-        <button type="button" onclick="setAdminFilter('TURKEY01')">Turkey</button>
-      </div>
+  <select onchange="setAdminFilter(this.value)">
+    <option value="ALL" ${ADMIN_FILTER === 'ALL' ? 'selected' : ''}>All</option>
+    <option value="INDIA01" ${ADMIN_FILTER === 'INDIA01' ? 'selected' : ''}>India</option>
+    <option value="PERU01" ${ADMIN_FILTER === 'PERU01' ? 'selected' : ''}>Peru</option>
+    <option value="TAIWAN01" ${ADMIN_FILTER === 'TAIWAN01' ? 'selected' : ''}>Taiwan</option>
+    <option value="TURKEY01" ${ADMIN_FILTER === 'TURKEY01' ? 'selected' : ''}>Turkey</option>
+  </select>
+</div>
       
     `
     : '';
