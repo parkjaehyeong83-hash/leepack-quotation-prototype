@@ -1215,6 +1215,19 @@ function viewDbRequest(id) {
   box.innerHTML = `
   <style>
 @media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #printArea,
+#printArea * {
+  visibility: visible !important;
+}
+#printArea {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+}
   @page {
     size: A4;
     margin: 12mm;
@@ -1255,7 +1268,7 @@ function viewDbRequest(id) {
         ← Back to My Requests
       </button>
     </div>
-
+<div id="printArea">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
   <h3 style="margin:0;">Quotation Request Details</h3>
   <button type="button" onclick="window.print()">🖨 Print</button>
@@ -1392,7 +1405,7 @@ function viewDbRequest(id) {
         </tr>
       </tbody>
     </table>
-
+</div>
     <div style="margin-top:16px;">
       <button
         type="button"
