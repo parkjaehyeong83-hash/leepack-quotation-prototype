@@ -688,6 +688,7 @@ const monthlyPolyline = monthlyPoints.map(p => `${p.x},${p.y}`).join(' ');
   <h3 style="white-space:nowrap;">Requests by Status</h3>
   <select id="statusAgentFilter" onchange="setStatusFilter(this.value)">
   <option value="ALL" ${STATUS_FILTER === 'ALL' ? 'selected' : ''}>All Agents</option>
+  <option value="CUSTOMER" ${STATUS_FILTER === 'CUSTOMER' ? 'selected' : ''}>Customer</option>
   <option value="INDIA01" ${STATUS_FILTER === 'INDIA01' ? 'selected' : ''}>India Dealer</option>
   <option value="PERU01" ${STATUS_FILTER === 'PERU01' ? 'selected' : ''}>Peru Dealer</option>
   <option value="TAIWAN01" ${STATUS_FILTER === 'TAIWAN01' ? 'selected' : ''}>Taiwan Dealer</option>
@@ -1058,6 +1059,7 @@ const adminFilterHtml =
       <div style="margin-bottom:12px;">
  <select onchange="setAdminFilter(this.value)" style="width:200px;">
     <option value="ALL" ${ADMIN_FILTER === 'ALL' ? 'selected' : ''}>All</option>
+    <option value="CUSTOMER" ${ADMIN_FILTER === 'CUSTOMER' ? 'selected' : ''}>Customer</option>
     <option value="INDIA01" ${ADMIN_FILTER === 'INDIA01' ? 'selected' : ''}>India</option>
     <option value="PERU01" ${ADMIN_FILTER === 'PERU01' ? 'selected' : ''}>Peru</option>
     <option value="TAIWAN01" ${ADMIN_FILTER === 'TAIWAN01' ? 'selected' : ''}>Taiwan</option>
