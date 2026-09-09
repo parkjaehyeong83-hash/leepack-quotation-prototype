@@ -1075,8 +1075,8 @@ const adminFilterHtml =
       <colgroup>
  <col style="width:13%">
 <col style="width:10%">
-<col style="width:9%">
-<col style="width:7%">
+${CURRENT_AGENT.role === 'admin' ? '<col style="width:9%">' : ''}
+${CURRENT_AGENT.role === 'admin' ? '<col style="width:7%">' : ''}
 <col style="width:7%">
 <col style="width:13%">
 <col style="width:14%">
@@ -1096,7 +1096,7 @@ const adminFilterHtml =
          
             <th>Attachment</th>
             <th>Status</th>
-    <th style="min-width:125px;">${CURRENT_AGENT.role === 'admin' ? 'View' : 'View / Edit'}</th>
+    <th style="min-width:140px;">${CURRENT_AGENT.role === 'admin' ? 'View' : 'View / Edit'}</th>
           </tr>
         </thead>
         <tbody>
@@ -1141,7 +1141,7 @@ const adminFilterHtml =
       `
   }
 </td>
-        <td style="white-space:nowrap; min-width:125px;">
+       <td style="white-space:nowrap; min-width:140px; overflow:visible;">
   <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>
   ${
     CURRENT_AGENT.role === 'admin'
