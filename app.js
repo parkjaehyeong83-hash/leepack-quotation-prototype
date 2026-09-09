@@ -1099,17 +1099,12 @@ const adminFilterHtml =
               <td>${esc(r.product || '')}</td>
                 
               <td>
-  ${
-    r.attachments
-      ? r.attachments.split('\n').map((item, i) => {
-          const pos = item.indexOf(': ');
-          const url = pos >= 0 ? item.slice(pos + 2) : '';
-          return url
-            ? `<a href="${esc(url)}" target="_blank" rel="noopener">View${r.attachments.includes('\n') ? ' ' + (i + 1) : ''}</a>`
-            : '-';
-        }).join('<br>')
-      : '-'
-  }
+ ${
+  r.attachments
+    ? `View Files (${r.attachments.split('\n').filter(Boolean).length})`
+    : '-'
+}
+  
 </td>
             
              <td>
