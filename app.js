@@ -1096,7 +1096,7 @@ const adminFilterHtml =
          
             <th>Attachment</th>
             <th>Status</th>
-     <th>${CURRENT_AGENT.role === 'admin' ? 'View' : 'View / Edit'}</th>
+    <th style="min-width:140px;">${CURRENT_AGENT.role === 'admin' ? 'View' : 'View / Edit'}</th>
           </tr>
         </thead>
         <tbody>
@@ -1141,7 +1141,7 @@ const adminFilterHtml =
       `
   }
 </td>
-         <td style="white-space:nowrap;">
+        <td style="white-space:nowrap; min-width:140px; overflow:visible;">
   <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>
   ${
     CURRENT_AGENT.role === 'admin'
