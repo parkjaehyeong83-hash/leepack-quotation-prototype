@@ -1073,16 +1073,16 @@ const adminFilterHtml =
     ${adminFilterHtml}
       <table>
       <colgroup>
-  <col style="width:12%">
-  <col style="width:17%">
-  <col style="width:7%">
-  <col style="width:8%">
-  <col style="width:7%">
-  <col style="width:12%">
-  <col style="width:14%">
-  <col style="width:10%">
-  <col style="width:7%">
-  <col style="width:6%">
+  <col style="width:13%">
+<col style="width:11%">
+<col style="width:8%">
+<col style="width:8%">
+<col style="width:7%">
+<col style="width:13%">
+<col style="width:17%">
+<col style="width:10%">
+<col style="width:8%">
+<col style="width:5%">
 </colgroup>
         <thead>
           <tr>
@@ -1103,7 +1103,7 @@ const adminFilterHtml =
           ${visibleRows.map(r => `
             <tr>
               <td>${esc(r.requestId || '')}</td>
-              <td>${esc(r.receivedDate || '')}</td>
+             <td>${esc(String(r.receivedDate || '').slice(0, 10))}</td>
               <td>${esc(r.source === 'CUSTOMER' ? 'Customer' : 'Dealer')}</td>
               <td>${esc(r.agentId || '')}</td>
 <td>${esc(r.country || '')}</td>
