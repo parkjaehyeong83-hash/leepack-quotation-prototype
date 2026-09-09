@@ -1213,6 +1213,41 @@ function viewDbRequest(id) {
     : '-';
 
   box.innerHTML = `
+  <style>
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    margin: 0;
+    background: #fff;
+  }
+
+  button,
+  #topbar,
+  .nav-tabs {
+    display: none !important;
+  }
+
+  table {
+    width: 100% !important;
+    font-size: 10pt !important;
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    padding: 4px 6px !important;
+    word-break: break-word !important;
+  }
+
+  h3 {
+    font-size: 14pt !important;
+  }
+}
+</style>
     <div style="margin-bottom:16px;">
       <button
         type="button"
@@ -1221,7 +1256,10 @@ function viewDbRequest(id) {
       </button>
     </div>
 
-    <h3>Quotation Request Details</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+  <h3 style="margin:0;">Quotation Request Details</h3>
+  <button type="button" onclick="window.print()">🖨 Print</button>
+</div>
 
     <table>
       <tbody>
