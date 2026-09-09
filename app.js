@@ -1074,6 +1074,7 @@ const adminFilterHtml =
           <tr>
             <th>Request ID</th>
             <th>Date</th>
+            <th>Source</th>
             <th>Agent ID</th>
             <th>Country</th>
             <th>Customer</th>
@@ -1089,6 +1090,7 @@ const adminFilterHtml =
             <tr>
               <td>${esc(r.requestId || '')}</td>
               <td>${esc(r.receivedDate || '')}</td>
+              <td>${esc(r.source === 'CUSTOMER' ? 'Customer' : 'Dealer')}</td>
               <td>${esc(r.agentId || '')}</td>
 <td>${esc(r.country || '')}</td>
               <td>${esc(r.customer || '')}</td>
