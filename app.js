@@ -1090,7 +1090,7 @@ ${CURRENT_AGENT.role === 'admin' ? '<col style="width:7%">' : ''}
             <th>Date</th>
            ${CURRENT_AGENT.role === 'admin' ? '<th>Source</th>' : ''}
           ${CURRENT_AGENT.role === 'admin' ? '<th>Agent ID</th>' : ''}
-            <th>Country</th>
+          
             <th>Customer</th>
             <th>Product</th>
          
@@ -1106,7 +1106,7 @@ ${CURRENT_AGENT.role === 'admin' ? '<col style="width:7%">' : ''}
              <td>${esc(String(r.receivedDate || '').slice(0, 10))}</td>
              ${CURRENT_AGENT.role === 'admin' ? `<td>${esc(r.source === 'CUSTOMER' ? 'Customer' : 'Dealer')}</td>` : ''}
              ${CURRENT_AGENT.role === 'admin' ? `<td>${esc(r.source === 'CUSTOMER' ? '-' : (r.agentId || ''))}</td>` : ''}
-<td>${esc(r.country || '')}</td>
+
               <td>${esc(r.customer || '')}</td>
               <td>${esc(r.product || '')}</td>
                 
@@ -1141,14 +1141,10 @@ ${CURRENT_AGENT.role === 'admin' ? '<col style="width:7%">' : ''}
       `
   }
 </td>
-       <td style="white-space:nowrap; min-width:140px; overflow:visible;">
-  <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>
-  ${
-    CURRENT_AGENT.role === 'admin'
-      ? ''
-      : `<button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button>`
-  }
+       <td style="white-space:nowrap; width:110px; overflow:visible;">
+  <button type="button" onclick="viewDbRequest('${r.requestId}')">View</button>${CURRENT_AGENT.role === 'admin' ? '' : ` <button type="button" onclick="editDbRequest('${r.requestId}')">Edit</button>`}
 </td>
+
           `).join('')}
         </tbody>
       </table>
