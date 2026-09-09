@@ -1088,7 +1088,7 @@ const adminFilterHtml =
           <tr>
             <th>Request ID</th>
             <th>Date</th>
-            <th>Source</th>
+           ${CURRENT_AGENT.role === 'admin' ? '<th>Source</th>' : ''}
             <th>Agent ID</th>
             <th>Country</th>
             <th>Customer</th>
@@ -1104,7 +1104,7 @@ const adminFilterHtml =
             <tr>
               <td>${esc(r.requestId || '')}</td>
              <td>${esc(String(r.receivedDate || '').slice(0, 10))}</td>
-              <td>${esc(r.source === 'CUSTOMER' ? 'Customer' : 'Dealer')}</td>
+             ${CURRENT_AGENT.role === 'admin' ? `<td>${esc(r.source === 'CUSTOMER' ? 'Customer' : 'Dealer')}</td>` : ''}
               <td>${esc(r.source === 'CUSTOMER' ? '-' : (r.agentId || ''))}</td>
 <td>${esc(r.country || '')}</td>
               <td>${esc(r.customer || '')}</td>
