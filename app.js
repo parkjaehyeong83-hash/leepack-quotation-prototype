@@ -1072,6 +1072,18 @@ const adminFilterHtml =
     box.innerHTML = `
     ${adminFilterHtml}
       <table>
+      <colgroup>
+  <col style="width:12%">
+  <col style="width:17%">
+  <col style="width:7%">
+  <col style="width:8%">
+  <col style="width:7%">
+  <col style="width:12%">
+  <col style="width:14%">
+  <col style="width:10%">
+  <col style="width:7%">
+  <col style="width:6%">
+</colgroup>
         <thead>
           <tr>
             <th>Request ID</th>
