@@ -1081,8 +1081,8 @@ const adminFilterHtml =
 <col style="width:13%">
 <col style="width:16%">
 <col style="width:10%">
-<col style="width:10%">
-<col style="width:5%">
+<col style="width:9%">
+<col style="width:6%">
 </colgroup>
         <thead>
           <tr>
